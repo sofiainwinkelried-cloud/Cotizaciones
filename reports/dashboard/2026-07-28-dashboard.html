@@ -10,9 +10,11 @@
     --grid: #e1e0d9;
     --axis: #c3c2b7;
     --border: rgba(11,11,11,0.08);
-    --series-cabify: #2a78d6;
-    --series-uber: #eb6834;
-    --series-didi: #1baf7a;
+    --series-cabify: #7c3aed;
+    --series-uber: #1c1c1c;
+    --series-didi: #d9660a;
+    --metric-1: #2a78d6;
+    --metric-2: #eb6834;
     --div-neg: #2a78d6;
     --div-pos: #e34948;
     --good: #0ca30c;
@@ -35,9 +37,11 @@
       --grid: #2c2c2a;
       --axis: #383835;
       --border: rgba(255,255,255,0.09);
-      --series-cabify: #3987e5;
-      --series-uber: #d95926;
-      --series-didi: #199e70;
+      --series-cabify: #a78bfa;
+      --series-uber: #dcdcdc;
+      --series-didi: #ffa94d;
+      --metric-1: #3987e5;
+      --metric-2: #d95926;
       --div-neg: #3987e5;
       --div-pos: #e66767;
       --good: #0ca30c;
@@ -60,9 +64,11 @@
     --grid: #2c2c2a;
     --axis: #383835;
     --border: rgba(255,255,255,0.09);
-    --series-cabify: #3987e5;
-    --series-uber: #d95926;
-    --series-didi: #199e70;
+    --series-cabify: #a78bfa;
+    --series-uber: #dcdcdc;
+    --series-didi: #ffa94d;
+    --metric-1: #3987e5;
+    --metric-2: #d95926;
     --div-neg: #3987e5;
     --div-pos: #e66767;
     --good: #0ca30c;
@@ -1312,16 +1318,16 @@ function renderWeeklySection() {
   grid.innerHTML = "";
 
   const cards = [
-    {title: "Estimaciones por semana", note: "Demanda total de Cabify en Córdoba (toda la ciudad)", build: () => buildWeeklyBarChart('estimaciones', 'var(--series-cabify)')},
-    {title: "Drivers activos por semana", note: "Disponibilidad de conductores (oferta)", build: () => buildWeeklyLineChart([{key:'drivers_activos', name:'Drivers activos', colorVar:'var(--series-cabify)'}])},
+    {title: "Estimaciones por semana", note: "Demanda total de Cabify en Córdoba (toda la ciudad)", build: () => buildWeeklyBarChart('estimaciones', 'var(--metric-1)')},
+    {title: "Drivers activos por semana", note: "Disponibilidad de conductores (oferta)", build: () => buildWeeklyLineChart([{key:'drivers_activos', name:'Drivers activos', colorVar:'var(--metric-1)'}])},
     {title: "% Conversión y % Éxito", note: "", build: () => buildWeeklyLineChart([
-      {key:'conversion_rate', name:'% Conversión', colorVar:'var(--series-cabify)'},
-      {key:'success_rate', name:'% Éxito', colorVar:'var(--series-uber)'},
+      {key:'conversion_rate', name:'% Conversión', colorVar:'var(--metric-1)'},
+      {key:'success_rate', name:'% Éxito', colorVar:'var(--metric-2)'},
     ], v => (v*100).toFixed(0) + '%'), legend: [
-      {name: '% Conversión a pedido', colorVar: 'var(--series-cabify)'},
-      {name: '% Éxito (viajes completados)', colorVar: 'var(--series-uber)'},
+      {name: '% Conversión a pedido', colorVar: 'var(--metric-1)'},
+      {name: '% Éxito (viajes completados)', colorVar: 'var(--metric-2)'},
     ]},
-    {title: "Horas trabajadas por semana", note: "Horas totales conectadas de conductores", build: () => buildWeeklyLineChart([{key:'working_hours', name:'Working hours', colorVar:'var(--series-uber)'}])},
+    {title: "Horas trabajadas por semana", note: "Horas totales conectadas de conductores", build: () => buildWeeklyLineChart([{key:'working_hours', name:'Working hours', colorVar:'var(--metric-2)'}])},
   ];
 
   cards.forEach(c => {
