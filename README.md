@@ -18,10 +18,15 @@ DiDi todavía no está capturando datos (pendiente de configurar MacroDroid).
 
 ## Estructura
 
-- `data/raw/` — exports crudos de la planilla de Google Sheets (uno por corrida/fecha).
+- `data/raw/` — exports crudos: cotizaciones de la planilla de Google Sheets
+  (`cotizaciones_<fecha>.csv`) y snapshots semanales de oferta/demanda de
+  Córdoba (`weekly_cba_<fecha>.json`, sacados del dashboard de negocio).
 - `scripts/analizar_cotizaciones.py` — limpia un export y genera un reporte en markdown
   (precio promedio por ruta/hora, gap Cabify vs Uber, disponibilidad de precio).
 - `reports/` — reportes generados, uno por fecha de análisis.
+- `reports/dashboard/` — dashboard interactivo (HTML, self-contained). La versión
+  publicada como Claude Artifact se conecta en vivo a Google Drive; esta copia en
+  el repo queda como snapshot estático de respaldo/versionado.
 
 ## Cómo actualizar el análisis
 
@@ -44,6 +49,12 @@ DiDi todavía no está capturando datos (pendiente de configurar MacroDroid).
   principio/mediados de mes, ni semana calendario. El pipeline ya está
   armado para esos cortes; solo hace falta que se acumulen más días.
 - DiDi no tiene datos todavía.
-- Cuando haya suficiente historia, se puede cruzar con la planilla de
-  [drivers/oferta](https://docs.google.com/spreadsheets/d/1e9z_TESDjP-tB2OzHPFpvV6cZWMFkWZ5qYIYKPCbj9s/edit?gid=1693516104#gid=1693516104)
-  para relacionar comportamiento de precios con oferta de conductores.
+- El dashboard ya incluye contexto semanal de oferta/demanda de Cabify en
+  Córdoba (estimaciones, drivers activos, % conversión, % éxito, horas
+  trabajadas) sacado del
+  [dashboard de negocio CBA/RCU/VCP/TUC](https://docs.google.com/spreadsheets/d/1e9z_TESDjP-tB2OzHPFpvV6cZWMFkWZ5qYIYKPCbj9s/edit?gid=1693516104#gid=1693516104)
+  (pestaña "CBA"). Es a nivel de toda la ciudad, no solo las 4 rutas, y por
+  ahora es un snapshot manual (no vive) — para refrescarlo hay que volver a
+  pedirle a Claude que lo actualice con la última semana.
+- Cuando haya suficiente historia día a día, se puede cruzar ambos datasets
+  (precio por ruta vs. semana de negocio) para explicar comportamientos.

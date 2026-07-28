@@ -9,7 +9,7 @@
     --text-muted: #898781;
     --grid: #e1e0d9;
     --axis: #c3c2b7;
-    --border: rgba(11,11,11,0.10);
+    --border: rgba(11,11,11,0.08);
     --series-cabify: #2a78d6;
     --series-uber: #eb6834;
     --series-didi: #1baf7a;
@@ -21,6 +21,8 @@
     --chip-bg: #f0efec;
     --chip-bg-active: #2a78d6;
     --chip-text-active: #ffffff;
+    --shadow-card: 0 1px 2px rgba(11,11,11,0.05), 0 10px 28px -14px rgba(11,11,11,0.16);
+    --accent: #2a78d6;
   }
   @media (prefers-color-scheme: dark) {
     :root:where(:not([data-theme="light"])) .viz-root {
@@ -32,7 +34,7 @@
       --text-muted: #898781;
       --grid: #2c2c2a;
       --axis: #383835;
-      --border: rgba(255,255,255,0.10);
+      --border: rgba(255,255,255,0.09);
       --series-cabify: #3987e5;
       --series-uber: #d95926;
       --series-didi: #199e70;
@@ -41,9 +43,11 @@
       --good: #0ca30c;
       --warning: #fab219;
       --critical: #e66767;
-      --chip-bg: #26261f;
+      --chip-bg: #242420;
       --chip-bg-active: #3987e5;
       --chip-text-active: #ffffff;
+      --shadow-card: 0 1px 2px rgba(0,0,0,0.35), 0 10px 28px -14px rgba(0,0,0,0.55);
+      --accent: #3987e5;
     }
   }
   :root[data-theme="dark"] .viz-root {
@@ -55,7 +59,7 @@
     --text-muted: #898781;
     --grid: #2c2c2a;
     --axis: #383835;
-    --border: rgba(255,255,255,0.10);
+    --border: rgba(255,255,255,0.09);
     --series-cabify: #3987e5;
     --series-uber: #d95926;
     --series-didi: #199e70;
@@ -64,9 +68,11 @@
     --good: #0ca30c;
     --warning: #fab219;
     --critical: #e66767;
-    --chip-bg: #26261f;
+    --chip-bg: #242420;
     --chip-bg-active: #3987e5;
     --chip-text-active: #ffffff;
+    --shadow-card: 0 1px 2px rgba(0,0,0,0.35), 0 10px 28px -14px rgba(0,0,0,0.55);
+    --accent: #3987e5;
   }
 
   * { box-sizing: border-box; }
@@ -74,19 +80,28 @@
     background: var(--page);
     color: var(--text-primary);
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-    padding: 24px 16px 48px;
-    max-width: 1160px;
+    line-height: 1.45;
+    padding: 28px 18px 56px;
+    max-width: 1180px;
     margin: 0 auto;
   }
-  h1 { font-size: 1.5rem; margin: 0 0 4px; }
-  .subtitle { color: var(--text-secondary); font-size: 0.95rem; margin: 0 0 4px; }
+  h1 { font-size: 1.55rem; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .subtitle { color: var(--text-secondary); font-size: 0.95rem; margin: 0; }
 
-  .header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+  .panel {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow-card);
+  }
+
+  .header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 6px; }
 
   .live-status {
     display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
     background: var(--surface-1); border: 1px solid var(--border); border-radius: 999px;
-    padding: 6px 8px 6px 14px; font-size: 0.8rem; color: var(--text-secondary); white-space: nowrap;
+    padding: 7px 8px 7px 16px; font-size: 0.8rem; color: var(--text-secondary); white-space: nowrap;
+    box-shadow: var(--shadow-card);
   }
   .live-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
   .live-dot.on { background: var(--good); }
@@ -95,12 +110,14 @@
   .live-dot.err { background: var(--critical); }
   .live-status button {
     border: 1px solid var(--border); background: transparent; color: var(--text-primary);
-    border-radius: 999px; padding: 4px 12px; font-size: 0.78rem; cursor: pointer;
+    border-radius: 999px; padding: 5px 14px; font-size: 0.78rem; cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
   }
   .live-status button:hover { background: var(--chip-bg); }
+  .live-status button:active { transform: scale(0.97); }
 
   .banner {
-    font-size: 0.85rem; border-radius: 8px; padding: 10px 14px; margin: 14px 0;
+    font-size: 0.85rem; border-radius: 10px; padding: 11px 15px; margin: 16px 0;
     border: 1px solid var(--border);
   }
   .banner.info { color: var(--text-secondary); background: var(--surface-1); }
@@ -111,36 +128,45 @@
   .caveat {
     color: var(--text-secondary);
     font-size: 0.85rem;
-    background: var(--surface-1);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 14px;
-    margin: 16px 0 20px;
+    padding: 12px 16px;
+    margin: 18px 0 22px;
   }
   .caveat b { color: var(--text-primary); }
 
   /* ---- Filters ---- */
   .filter-bar {
-    display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start;
-    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
-    padding: 14px 16px; margin: 0 0 6px;
+    display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start;
+    padding: 16px 18px; margin: 0 0 6px;
   }
-  .filter-group { display: flex; flex-direction: column; gap: 6px; }
-  .filter-group > label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted); }
+  .filter-group { display: flex; flex-direction: column; gap: 7px; }
+  .filter-group > label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; }
   .filter-bar select, .filter-bar input[type="datetime-local"] {
     font-family: inherit; font-size: 0.85rem; color: var(--text-primary);
-    background: var(--page); border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px;
+    background: var(--page); border: 1px solid var(--border); border-radius: 7px; padding: 6px 9px;
   }
-  .chip-group { display: flex; flex-wrap: wrap; gap: 6px; max-width: 420px; }
+  .chip-group { display: flex; flex-wrap: wrap; gap: 6px; max-width: 440px; }
   .chip {
     font-family: inherit; font-size: 0.78rem; border: 1px solid var(--border); background: var(--chip-bg);
-    color: var(--text-secondary); border-radius: 999px; padding: 4px 12px; cursor: pointer;
+    color: var(--text-secondary); border-radius: 999px; padding: 5px 13px; cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
   }
+  .chip:hover { transform: translateY(-1px); }
   .chip[aria-pressed="true"] { background: var(--chip-bg-active); color: var(--chip-text-active); border-color: transparent; }
-  .filter-note { font-size: 0.78rem; color: var(--text-muted); margin: 6px 0 22px; }
+  .filter-note { font-size: 0.78rem; color: var(--text-muted); margin: 8px 2px 26px; }
 
   .content-wrap { transition: opacity 0.2s ease; }
   .content-wrap.stale { opacity: 0.55; }
+
+  .section-block { margin-bottom: 40px; }
+  .section-head { margin-bottom: 16px; }
+  .eyebrow {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--accent);
+    font-weight: 700; margin: 0 0 4px;
+  }
+  h2.section-title { font-size: 1.2rem; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.005em; }
+  .section-desc { font-size: 0.85rem; color: var(--text-secondary); margin: 0; max-width: 78ch; }
+
+  hr.divider { border: none; border-top: 1px solid var(--border); margin: 44px 0; }
 
   .stat-row {
     display: flex;
@@ -149,102 +175,97 @@
     margin-bottom: 28px;
   }
   .stat-tile {
-    background: var(--surface-1);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 16px;
-    min-width: 140px;
+    padding: 14px 18px;
+    min-width: 150px;
     flex: 1 1 160px;
   }
-  .stat-tile .label { font-size: 0.75rem; color: var(--text-secondary); }
-  .stat-tile .value { font-size: 1.4rem; font-weight: 600; margin-top: 2px; }
+  .stat-tile .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted); font-weight: 600; }
+  .stat-tile .value { font-size: 1.65rem; font-weight: 700; margin-top: 4px; letter-spacing: -0.01em; }
+  .stat-tile .delta { font-size: 0.76rem; margin-top: 3px; color: var(--text-secondary); }
+  .stat-tile .delta.up { color: var(--good); }
+  .stat-tile .delta.down { color: var(--critical); }
 
   .legend {
     display: flex;
-    gap: 20px;
+    gap: 22px;
     align-items: center;
-    margin: 4px 0 16px;
+    margin: 4px 0 18px;
     font-size: 0.85rem;
     color: var(--text-secondary);
   }
-  .legend-item { display: flex; align-items: center; gap: 6px; }
-  .legend-swatch { width: 16px; height: 2px; border-radius: 2px; display: inline-block; }
+  .legend-item { display: flex; align-items: center; gap: 7px; }
+  .legend-swatch { width: 16px; height: 3px; border-radius: 2px; display: inline-block; }
 
   .chart-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 32px;
+    gap: 18px;
   }
   @media (max-width: 720px) {
     .chart-grid { grid-template-columns: 1fr; }
   }
   .chart-card {
-    background: var(--surface-1);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 14px 8px;
+    padding: 16px 16px 10px;
     overflow-x: auto;
   }
-  .chart-card h3 { font-size: 0.95rem; margin: 0 0 2px; }
-  .chart-card .chart-note { font-size: 0.75rem; color: var(--text-muted); margin: 0 0 8px; }
+  .chart-card h3 { font-size: 0.95rem; font-weight: 650; margin: 0 0 2px; }
+  .chart-card .chart-note { font-size: 0.75rem; color: var(--text-muted); margin: 0 0 10px; }
   .chart-card .empty-note { font-size: 0.8rem; color: var(--text-muted); padding: 30px 0; text-align: center; }
 
   svg.chart { width: 100%; height: auto; display: block; overflow: visible; }
   .gridline { stroke: var(--grid); stroke-width: 1; }
   .axis-text { fill: var(--text-muted); font-size: 10px; }
-  .end-label { fill: var(--text-primary); font-size: 11px; font-weight: 600; }
+  .end-label { fill: var(--text-primary); font-size: 11px; font-weight: 650; }
   .crosshair { stroke: var(--axis); stroke-width: 1; pointer-events: none; }
   .hit-rect { fill: transparent; }
+  .bar-mark { transition: opacity 0.1s ease; }
+  .bar-mark:hover { opacity: 0.82; }
 
   .tooltip {
     position: absolute;
     pointer-events: none;
     background: var(--surface-1);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 6px 10px;
+    border-radius: 9px;
+    padding: 7px 11px;
     font-size: 0.78rem;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
     display: none;
     white-space: nowrap;
     z-index: 10;
   }
-  .tooltip .t-time { color: var(--text-muted); margin-bottom: 3px; }
-  .tooltip .t-row { display: flex; align-items: center; gap: 6px; }
+  .tooltip .t-time { color: var(--text-muted); margin-bottom: 4px; }
+  .tooltip .t-row { display: flex; align-items: center; gap: 7px; }
   .tooltip .t-key { width: 10px; height: 2px; display: inline-block; }
   .tooltip .t-val { font-weight: 700; color: var(--text-primary); }
   .tooltip .t-name { color: var(--text-secondary); }
 
-  h2.section { font-size: 1.1rem; margin: 8px 0 12px; }
-
   .bar-chart-card {
-    background: var(--surface-1);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 32px;
+    padding: 18px;
     overflow-x: auto;
   }
 
   details.table-view {
-    background: var(--surface-1);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 16px;
-    margin-bottom: 16px;
+    padding: 14px 18px;
   }
-  details.table-view summary { cursor: pointer; font-weight: 600; font-size: 0.9rem; }
-  table.data-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 10px; }
+  details.table-view summary { cursor: pointer; font-weight: 650; font-size: 0.9rem; list-style: none; }
+  details.table-view summary::-webkit-details-marker { display: none; }
+  details.table-view summary::before { content: "▸ "; color: var(--text-muted); }
+  details.table-view[open] summary::before { content: "▾ "; }
+  table.data-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 12px; }
+  table.data-table thead th {
+    position: sticky; top: 0; background: var(--surface-1);
+  }
   table.data-table th, table.data-table td {
-    text-align: right; padding: 4px 8px; border-bottom: 1px solid var(--grid);
+    text-align: right; padding: 6px 10px; border-bottom: 1px solid var(--grid);
     font-variant-numeric: tabular-nums;
   }
   table.data-table th:first-child, table.data-table td:first-child { text-align: left; }
-  table.data-table th { color: var(--text-secondary); font-weight: 600; }
-  .scroll-wrap { max-width: 100%; overflow-x: auto; }
+  table.data-table th { color: var(--text-secondary); font-weight: 650; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.02em; }
+  table.data-table tbody tr:nth-child(even) { background: color-mix(in srgb, var(--text-primary) 3%, transparent); }
+  .scroll-wrap { max-width: 100%; overflow-x: auto; max-height: 480px; overflow-y: auto; border-radius: 8px; }
 
-  footer.note { color: var(--text-muted); font-size: 0.78rem; margin-top: 8px; }
+  footer.note { color: var(--text-muted); font-size: 0.78rem; margin-top: 12px; }
 </style>
 
 <div class="viz-root">
@@ -262,9 +283,9 @@
 
   <div class="banner err" id="error-banner" hidden></div>
 
-  <div class="caveat" id="caveat-box"></div>
+  <div class="caveat panel" id="caveat-box"></div>
 
-  <div class="filter-bar" id="filter-bar">
+  <div class="filter-bar panel" id="filter-bar">
     <div class="filter-group">
       <label for="f-preset">Rango de fechas</label>
       <select id="f-preset">
@@ -274,7 +295,7 @@
         <option value="7d">Última semana</option>
         <option value="custom">Personalizado…</option>
       </select>
-      <span id="f-custom-range" style="display:none; display:flex; gap:6px; align-items:center;">
+      <span id="f-custom-range" style="display:none; gap:6px; align-items:center;">
         <input type="datetime-local" id="f-from"> <span style="font-size:0.78rem;color:var(--text-muted);">a</span> <input type="datetime-local" id="f-to">
       </span>
     </div>
@@ -298,22 +319,45 @@
   <p class="filter-note" id="filter-note"></p>
 
   <div class="content-wrap" id="content-wrap">
-    <div class="stat-row" id="stat-row"></div>
-
-    <div class="legend" id="legend"></div>
-
-    <div class="chart-grid" id="chart-grid"></div>
-
-    <h2 class="section">Gap promedio Cabify vs Uber por ruta</h2>
-    <div class="bar-chart-card" id="bar-chart-card">
-      <p class="chart-note" style="color:var(--text-muted);font-size:0.8rem;margin:0 0 10px;">
-        Gap = (Precio Cabify − Precio Uber) / Precio Uber. Negativo (azul) = Cabify más barata que Uber en promedio.
-      </p>
-      <div id="bar-chart"></div>
+    <div class="section-block">
+      <div class="stat-row" id="stat-row"></div>
+      <div class="legend" id="legend"></div>
+      <div class="chart-grid" id="chart-grid"></div>
     </div>
 
-    <details class="table-view">
-      <summary>Ver datos en tabla</summary>
+    <div class="section-block">
+      <div class="section-head">
+        <p class="eyebrow">Comparación de precio</p>
+        <h2 class="section-title">Gap promedio Cabify vs Uber por ruta</h2>
+        <p class="section-desc">Gap = (Precio Cabify − Precio Uber) / Precio Uber. Negativo (azul) = Cabify más barata que Uber en promedio.</p>
+      </div>
+      <div class="bar-chart-card panel" id="bar-chart-card">
+        <div id="bar-chart"></div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="section-block" id="weekly-section">
+      <div class="section-head">
+        <p class="eyebrow">Contexto de negocio · ciudad completa</p>
+        <h2 class="section-title">Oferta y demanda semanal — Cabify Córdoba</h2>
+        <p class="section-desc" id="weekly-desc"></p>
+      </div>
+      <div class="stat-row" id="weekly-stat-row"></div>
+      <div class="chart-grid" id="weekly-chart-grid"></div>
+      <details class="table-view panel" style="margin-top:18px;">
+        <summary>Ver tabla semanal completa</summary>
+        <div class="scroll-wrap">
+          <table class="data-table" id="weekly-table"></table>
+        </div>
+      </details>
+    </div>
+
+    <hr class="divider">
+
+    <details class="table-view panel">
+      <summary>Ver cotizaciones en tabla</summary>
       <div class="scroll-wrap">
         <table class="data-table" id="data-table"></table>
       </div>
@@ -331,8 +375,17 @@
 // ============================================================
 const SNAPSHOT_DATA = [{"t": "2026-07-27T15:49:14", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3800.0, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-27T15:52:14", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3700.0, "uber": 4200.0, "km": 4.0}, {"t": "2026-07-27T15:55:14", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 7600.0, "uber": 6000.0, "km": 7.9}, {"t": "2026-07-27T15:58:14", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4800.0, "uber": 7500.0, "km": 7.5}, {"t": "2026-07-27T16:32:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": null, "uber": 3400.0, "km": 3.9}, {"t": "2026-07-27T16:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3400.0, "uber": 4400.0, "km": 4.0}, {"t": "2026-07-27T16:36:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 7100.0, "uber": 6000.0, "km": 7.9}, {"t": "2026-07-27T16:38:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4800.0, "uber": 7400.0, "km": 7.5}, {"t": "2026-07-27T17:02:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": null, "uber": 3500.0, "km": 3.9}, {"t": "2026-07-27T17:04:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3400.0, "uber": 4400.0, "km": 4.0}, {"t": "2026-07-27T17:06:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": null, "uber": 6400.0, "km": 7.9}, {"t": "2026-07-27T17:08:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4900.0, "uber": 7400.0, "km": 7.5}, {"t": "2026-07-27T17:32:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": null, "uber": 3800.0, "km": 3.9}, {"t": "2026-07-27T17:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 4200.0, "uber": 4400.0, "km": 4.0}, {"t": "2026-07-27T17:36:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 6500.0, "uber": 8100.0, "km": 7.9}, {"t": "2026-07-27T17:38:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5400.0, "uber": 7500.0, "km": 7.5}, {"t": "2026-07-27T18:32:02", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 4100.0, "uber": 3500.0, "km": 3.9}, {"t": "2026-07-27T18:34:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3400.0, "uber": 4500.0, "km": 4.0}, {"t": "2026-07-27T18:36:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 7400.0, "uber": 6400.0, "km": 7.9}, {"t": "2026-07-27T18:38:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4800.0, "uber": 7500.0, "km": 7.5}, {"t": "2026-07-27T19:02:02", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 4100.0, "uber": 3400.0, "km": 3.9}, {"t": "2026-07-27T19:04:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3700.0, "uber": 4400.0, "km": 4.0}, {"t": "2026-07-27T19:06:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 6700.0, "uber": 6600.0, "km": 7.9}, {"t": "2026-07-27T19:08:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5300.0, "uber": 7200.0, "km": 7.5}, {"t": "2026-07-27T19:32:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3300.0, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-27T19:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3400.0, "uber": 4400.0, "km": 4.0}, {"t": "2026-07-27T19:36:02", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": null, "uber": 6500.0, "km": 7.9}, {"t": "2026-07-27T19:38:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4800.0, "uber": 7300.0, "km": 7.5}, {"t": "2026-07-27T20:32:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3200.0, "uber": 3600.0, "km": 3.9}, {"t": "2026-07-27T20:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": null, "uber": 4700.0, "km": 4.0}, {"t": "2026-07-27T20:36:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5500.0, "uber": 7100.0, "km": 7.9}, {"t": "2026-07-27T20:38:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4700.0, "uber": 7700.0, "km": 7.5}, {"t": "2026-07-27T21:02:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3500.0, "uber": 3500.0, "km": 3.9}, {"t": "2026-07-27T21:04:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3600.0, "uber": 4700.0, "km": 4.0}, {"t": "2026-07-27T21:06:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5500.0, "uber": 6900.0, "km": 7.9}, {"t": "2026-07-27T21:08:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": 6900.0, "uber": 7600.0, "km": 7.5}, {"t": "2026-07-27T21:32:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3100.0, "uber": 3500.0, "km": 3.9}, {"t": "2026-07-27T21:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 2900.0, "uber": 4600.0, "km": 4.0}, {"t": "2026-07-27T21:36:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 4500.0, "uber": 6900.0, "km": 7.9}, {"t": "2026-07-27T21:38:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5200.0, "uber": 7400.0, "km": 7.5}, {"t": "2026-07-27T22:02:02", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3800.0, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-27T22:04:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3200.0, "uber": 4600.0, "km": 4.0}, {"t": "2026-07-27T22:06:02", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5400.0, "uber": 7000.0, "km": 7.9}, {"t": "2026-07-27T22:08:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4600.0, "uber": 7400.0, "km": 7.5}, {"t": "2026-07-27T22:32:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3400.0, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-27T22:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 4300.0, "uber": 4600.0, "km": 4.0}, {"t": "2026-07-27T22:36:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5400.0, "uber": 6900.0, "km": 7.9}, {"t": "2026-07-27T22:38:03", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5200.0, "uber": 7400.0, "km": 7.5}, {"t": "2026-07-27T23:02:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3000.0, "uber": 3400.0, "km": 3.9}, {"t": "2026-07-27T23:04:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": null, "uber": null, "km": 4.0}, {"t": "2026-07-27T23:06:02", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 4900.0, "uber": 7300.0, "km": 7.9}, {"t": "2026-07-27T23:08:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4600.0, "uber": 20100.0, "km": 7.5}, {"t": "2026-07-27T23:32:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3000.0, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-27T23:34:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3500.0, "uber": 4600.0, "km": 4.0}, {"t": "2026-07-27T23:36:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 7000.0, "uber": 7200.0, "km": 7.9}, {"t": "2026-07-27T23:38:00", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4600.0, "uber": null, "km": 7.5}, {"t": "2026-07-28T00:02:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3000.0, "uber": 4000.0, "km": 3.9}, {"t": "2026-07-28T00:04:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3100.0, "uber": 5200.0, "km": 4.0}, {"t": "2026-07-28T00:06:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5900.0, "uber": 15100.0, "km": 7.9}, {"t": "2026-07-28T00:08:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5100.0, "uber": 8700.0, "km": 7.5}, {"t": "2026-07-28T00:32:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 7400.0, "uber": 3700.0, "km": 3.9}, {"t": "2026-07-28T00:34:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 7800.0, "uber": 5200.0, "km": 4.0}, {"t": "2026-07-28T00:36:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 6500.0, "uber": 8100.0, "km": 7.9}, {"t": "2026-07-28T00:38:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 10300.0, "uber": 9900.0, "km": 7.5}, {"t": "2026-07-28T01:02:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": null, "uber": 4700.0, "km": 3.9}, {"t": "2026-07-28T01:04:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": null, "uber": 5100.0, "km": 4.0}, {"t": "2026-07-28T01:06:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 11500.0, "uber": 10400.0, "km": 7.9}, {"t": "2026-07-28T01:08:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": 12000.0, "uber": 8100.0, "km": 7.5}, {"t": "2026-07-28T01:32:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3300.0, "uber": 3700.0, "km": 3.9}, {"t": "2026-07-28T01:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3500.0, "uber": 5100.0, "km": 4.0}, {"t": "2026-07-28T01:36:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5900.0, "uber": 7600.0, "km": 7.9}, {"t": "2026-07-28T01:38:00", "ruta": "Rufino Varela -> Santa Fe", "cabify": 11100.0, "uber": 8100.0, "km": 7.5}, {"t": "2026-07-28T02:02:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 4800.0, "uber": 3800.0, "km": 3.9}, {"t": "2026-07-28T02:04:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 4300.0, "uber": 5100.0, "km": 4.0}, {"t": "2026-07-28T02:06:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5200.0, "uber": 7100.0, "km": 7.9}, {"t": "2026-07-28T02:08:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": null, "uber": 8300.0, "km": 7.5}, {"t": "2026-07-28T02:32:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3000.0, "uber": 5600.0, "km": 3.9}, {"t": "2026-07-28T02:34:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3100.0, "uber": 9600.0, "km": 4.0}, {"t": "2026-07-28T02:36:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5300.0, "uber": 7100.0, "km": 7.9}, {"t": "2026-07-28T02:38:03", "ruta": "Rufino Varela -> Santa Fe", "cabify": null, "uber": 8200.0, "km": 7.5}, {"t": "2026-07-28T09:26:36", "ruta": "Crisol 64 -> Plaza Colón", "cabify": null, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-28T09:28:37", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 4400.0, "uber": 3800.0, "km": 4.0}, {"t": "2026-07-28T09:30:37", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 5600.0, "uber": 6300.0, "km": 3.9}, {"t": "2026-07-28T09:32:00", "ruta": "Rufino Varela -> Santa Fe", "cabify": null, "uber": null, "km": 7.5}, {"t": "2026-07-28T09:32:37", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 5300.0, "uber": null, "km": 4.0}, {"t": "2026-07-28T09:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 4100.0, "uber": 3800.0, "km": 4.0}, {"t": "2026-07-28T09:36:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5100.0, "uber": 6300.0, "km": 7.9}, {"t": "2026-07-28T09:38:00", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5300.0, "uber": 7200.0, "km": 7.5}, {"t": "2026-07-28T10:02:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3800.0, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-28T10:04:03", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3700.0, "uber": 3900.0, "km": 4.0}, {"t": "2026-07-28T10:06:04", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 6200.0, "uber": 6400.0, "km": 7.9}, {"t": "2026-07-28T10:08:03", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5300.0, "uber": 7000.0, "km": 7.5}];
 
+// ============================================================
+// Embedded weekly business context for Córdoba (whole city), from
+// the ops dashboard sheet. Snapshot captured 2026-07-28 — this is a
+// different cadence/scope than the per-route quotes above (macro
+// Cabify demand & driver supply vs. our own 4-route price scrape),
+// so it's shown as its own section rather than merged in.
+// ============================================================
+const WEEKLY_CBA_SNAPSHOT_DATE = "2026-07-28";
+const WEEKLY_CBA_DATA = [{"week_label":"2026 17","date":"2026-04-20","estimaciones":null,"re":45221,"do":26821,"success_rate":0.604,"conversion_rate":null,"usuarios_activos":14813,"usuarios_nuevos":616,"drivers_activos":1380,"drivers_nuevos":38,"drivers_churn":489,"drivers_reactivados":230,"working_hours":41475.3105},{"week_label":"2026 18","date":"2026-04-27","estimaciones":49401,"re":46174,"do":26000,"success_rate":0.575,"conversion_rate":0.3964,"usuarios_activos":14774,"usuarios_nuevos":684,"drivers_activos":1392,"drivers_nuevos":29,"drivers_churn":477,"drivers_reactivados":241,"working_hours":38475.9225},{"week_label":"2026 19","date":"2026-05-04","estimaciones":126936,"re":50757,"do":27503,"success_rate":0.5513,"conversion_rate":0.4015,"usuarios_activos":15318,"usuarios_nuevos":734,"drivers_activos":1327,"drivers_nuevos":36,"drivers_churn":493,"drivers_reactivados":186,"working_hours":40107.5102},{"week_label":"2026 20","date":"2026-05-11","estimaciones":115423,"re":47820,"do":26930,"success_rate":0.5727,"conversion_rate":0.4156,"usuarios_activos":14859,"usuarios_nuevos":688,"drivers_activos":1292,"drivers_nuevos":29,"drivers_churn":495,"drivers_reactivados":181,"working_hours":38333.5559},{"week_label":"2026 21","date":"2026-05-18","estimaciones":120643,"re":50554,"do":27645,"success_rate":0.5564,"conversion_rate":0.4202,"usuarios_activos":15875,"usuarios_nuevos":802,"drivers_activos":1277,"drivers_nuevos":28,"drivers_churn":482,"drivers_reactivados":188,"working_hours":38538.5979},{"week_label":"2026 22","date":"2026-05-25","estimaciones":100147,"re":42817,"do":24292,"success_rate":0.581,"conversion_rate":0.4289,"usuarios_activos":14003,"usuarios_nuevos":763,"drivers_activos":1246,"drivers_nuevos":29,"drivers_churn":523,"drivers_reactivados":187,"working_hours":35302.4896},{"week_label":"2026 23","date":"2026-06-01","estimaciones":115602,"re":47528,"do":25871,"success_rate":0.5504,"conversion_rate":0.4112,"usuarios_activos":14493,"usuarios_nuevos":805,"drivers_activos":1287,"drivers_nuevos":34,"drivers_churn":505,"drivers_reactivados":213,"working_hours":39806.7723},{"week_label":"2026 24","date":"2026-06-08","estimaciones":103924,"re":44617,"do":26141,"success_rate":0.5945,"conversion_rate":0.4308,"usuarios_activos":14549,"usuarios_nuevos":817,"drivers_activos":1224,"drivers_nuevos":27,"drivers_churn":492,"drivers_reactivados":171,"working_hours":38460.3368},{"week_label":"2026 25","date":"2026-06-15","estimaciones":107446,"re":45191,"do":23783,"success_rate":0.5341,"conversion_rate":0.4231,"usuarios_activos":13924,"usuarios_nuevos":688,"drivers_activos":1220,"drivers_nuevos":24,"drivers_churn":473,"drivers_reactivados":185,"working_hours":34685.3094},{"week_label":"2026 26","date":"2026-06-22","estimaciones":98833,"re":41869,"do":22871,"success_rate":0.5534,"conversion_rate":0.4256,"usuarios_activos":12587,"usuarios_nuevos":635,"drivers_activos":1171,"drivers_nuevos":21,"drivers_churn":420,"drivers_reactivados":157,"working_hours":35838.0037},{"week_label":"2026 27","date":"2026-06-29","estimaciones":105427,"re":46243,"do":25794,"success_rate":0.5655,"conversion_rate":0.4415,"usuarios_activos":14497,"usuarios_nuevos":793,"drivers_activos":1160,"drivers_nuevos":23,"drivers_churn":450,"drivers_reactivados":170,"working_hours":35963.642},{"week_label":"2026 28","date":"2026-07-06","estimaciones":90146,"re":37464,"do":20132,"success_rate":0.5445,"conversion_rate":0.4174,"usuarios_activos":12095,"usuarios_nuevos":657,"drivers_activos":1166,"drivers_nuevos":27,"drivers_churn":446,"drivers_reactivados":189,"working_hours":32438.3579},{"week_label":"2026 29","date":"2026-07-13","estimaciones":96847,"re":40965,"do":21205,"success_rate":0.5277,"conversion_rate":0.4249,"usuarios_activos":12095,"usuarios_nuevos":653,"drivers_activos":1172,"drivers_nuevos":26,"drivers_churn":436,"drivers_reactivados":186,"working_hours":35067.0852}];
+
 const SHEET_ID = "1SLtiQSFMCUntwpxdMmR6RSDsgNADXc4-Gu9_aSc15oo";
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/1SLtiQSFMCUntwpxdMmR6RSDsgNADXc4-Gu9_aSc15oo/edit?gid=0#gid=0";
 
 const ROUTE_META = {
   "Crisol 64 -> Plaza Colón": {short: "Crisol → Plaza Colón", tag: "corta · mucha demanda"},
@@ -353,10 +406,21 @@ function routeMeta(key) {
   return ROUTE_META[key] || {short: key, tag: ""};
 }
 
+function roundKm(km) {
+  return (km === null || km === undefined || isNaN(km)) ? null : Math.round(km);
+}
+
+function routeKmLabel(routeKey, data) {
+  const kms = data.filter(d => d.ruta === routeKey && d.km !== null && d.km !== undefined).map(d => d.km);
+  if (!kms.length) return "";
+  const avg = kms.reduce((a,b) => a+b, 0) / kms.length;
+  return roundKm(avg) + " km";
+}
+
 // ============================================================
 // State
 // ============================================================
-let RAW = SNAPSHOT_DATA.map(d => ({t: new Date(d.t), ruta: d.ruta, cabify: d.cabify, uber: d.uber, didi: (d.didi ?? null)}));
+let RAW = SNAPSHOT_DATA.map(d => ({t: new Date(d.t), ruta: d.ruta, cabify: d.cabify, uber: d.uber, didi: (d.didi ?? null), km: (d.km ?? null)}));
 let dataMode = "static"; // static | live | stale | error | refreshing
 let lastUpdated = null;
 
@@ -379,6 +443,12 @@ function cssVar(name) {
 
 function fmtMoney(v) {
   return v === null || v === undefined ? "s/d" : "$" + Math.round(v).toLocaleString('es-AR');
+}
+function fmtInt(v) {
+  return v === null || v === undefined ? "s/d" : Math.round(v).toLocaleString('es-AR');
+}
+function fmtPct(v, digits) {
+  return v === null || v === undefined ? "s/d" : (v*100).toFixed(digits ?? 1).replace(".", ",") + "%";
 }
 
 function relTime(ms) {
@@ -459,6 +529,7 @@ function csvToRecords(text) {
       cabify: parseNum(r[idx["Precio Cabify"]]),
       uber: parseNum(r[idx["Precio Uber"]]),
       didi: parseNum(r[idx["Precio DiDi"]]),
+      km: idx["Distance"] !== undefined ? parseNum(r[idx["Distance"]]) : null,
     });
   }
   return out;
@@ -570,7 +641,7 @@ function updateFilterNote() {
 }
 
 // ============================================================
-// Stat tiles
+// Stat tiles (per-route quotes)
 // ============================================================
 function renderStats(data) {
   const total = data.length;
@@ -588,7 +659,7 @@ function renderStats(data) {
   row.innerHTML = "";
   tiles.forEach(t => {
     const el = document.createElement('div');
-    el.className = 'stat-tile';
+    el.className = 'stat-tile panel';
     const l = document.createElement('div'); l.className = 'label'; l.textContent = t.label;
     const v = document.createElement('div'); v.className = 'value'; v.textContent = t.value;
     el.appendChild(l); el.appendChild(v);
@@ -610,7 +681,7 @@ function renderLegend(data) {
 }
 
 // ============================================================
-// Line charts (small multiples)
+// Line charts (small multiples) — per-route quotes over time
 // ============================================================
 const CW = 480, CH = 220, PAD = {top: 10, right: 44, bottom: 22, left: 44};
 const SERIES_DEFS = [
@@ -770,10 +841,12 @@ function renderCharts(data) {
   const routes = filters.routesMode === "all" ? getAllRoutes() : getAllRoutes().filter(r => filters.routesMode.has(r));
   routes.forEach(routeKey => {
     const card = document.createElement('div');
-    card.className = 'chart-card';
+    card.className = 'chart-card panel';
     const meta = routeMeta(routeKey);
+    const kmLabel = routeKmLabel(routeKey, RAW);
     const h3 = document.createElement('h3'); h3.textContent = meta.short;
-    const note = document.createElement('p'); note.className = 'chart-note'; note.textContent = meta.tag;
+    const note = document.createElement('p'); note.className = 'chart-note';
+    note.textContent = kmLabel ? `${meta.tag} · ${kmLabel}` : meta.tag;
     card.appendChild(h3); card.appendChild(note);
     card.appendChild(buildLineChart(routeKey, data));
     grid.appendChild(card);
@@ -805,7 +878,7 @@ function renderBarChart(data) {
     return;
   }
   const maxAbs = Math.max(...gaps.map(g => Math.abs(g.mean))) * 1.25 || 1;
-  const W = 900, rowH = 56, PADL = 230, PADR = 70, H = rowH * gaps.length + 20;
+  const W = 900, rowH = 58, PADL = 230, PADR = 70, H = rowH * gaps.length + 20;
   const midX = PADL + (W - PADL - PADR) / 2;
   const scale = v => (W - PADL - PADR) / 2 / maxAbs * v;
 
@@ -826,6 +899,7 @@ function renderBarChart(data) {
     const barW = Math.abs(scale(g.mean));
     const barX = g.mean < 0 ? midX - barW : midX;
     const colorVar = g.mean < 0 ? 'var(--div-neg)' : 'var(--div-pos)';
+    const kmLabel = routeKmLabel(g.routeKey, RAW);
 
     const label = document.createElementNS(svgNS, "text");
     label.setAttribute("x", PADL - 12); label.setAttribute("y", cy - 6);
@@ -840,13 +914,14 @@ function renderBarChart(data) {
     tag.setAttribute("x", PADL - 12); tag.setAttribute("y", cy + 10);
     tag.setAttribute("text-anchor", "end");
     tag.setAttribute("class", "axis-text");
-    tag.textContent = routeMeta(g.routeKey).tag;
+    tag.textContent = kmLabel ? `${routeMeta(g.routeKey).tag} · ${kmLabel}` : routeMeta(g.routeKey).tag;
     svg.appendChild(tag);
 
     const bar = document.createElementNS(svgNS, "rect");
-    bar.setAttribute("x", barX); bar.setAttribute("y", cy - 12);
-    bar.setAttribute("width", Math.max(barW, 1)); bar.setAttribute("height", 24);
-    bar.setAttribute("rx", 4);
+    bar.setAttribute("class", "bar-mark");
+    bar.setAttribute("x", barX); bar.setAttribute("y", cy - 13);
+    bar.setAttribute("width", Math.max(barW, 1)); bar.setAttribute("height", 26);
+    bar.setAttribute("rx", 5);
     bar.setAttribute("fill", colorVar);
     svg.appendChild(bar);
 
@@ -864,14 +939,14 @@ function renderBarChart(data) {
 }
 
 // ============================================================
-// Table view
+// Table view (per-route quotes)
 // ============================================================
 function renderTable(data) {
   const table = document.getElementById('data-table');
   table.innerHTML = "";
   const thead = document.createElement('thead');
   const headRow = document.createElement('tr');
-  ["Fecha", "Ruta", "Cabify", "Uber", "DiDi", "Gap %"].forEach(h => {
+  ["Fecha", "Ruta", "Km", "Cabify", "Uber", "DiDi", "Gap %"].forEach(h => {
     const th = document.createElement('th'); th.textContent = h; headRow.appendChild(th);
   });
   thead.appendChild(headRow);
@@ -881,9 +956,11 @@ function renderTable(data) {
   const sorted = [...data].sort((a,b) => b.t - a.t).slice(0, 500);
   sorted.forEach(d => {
     const tr = document.createElement('tr');
+    const km = roundKm(d.km);
     const cells = [
       d.t.toLocaleString('es-AR'),
       routeMeta(d.ruta).short,
+      km === null ? '—' : km + ' km',
       fmtMoney(d.cabify),
       fmtMoney(d.uber),
       fmtMoney(d.didi),
@@ -922,7 +999,302 @@ function renderCaveatAndSource() {
     caveat.appendChild(document.createTextNode(' día de semana, principio/mediados de mes ni semanas calendario con tan poca historia.'));
   }
   document.getElementById('source-note').textContent =
-    `Fuente: planilla "Cotizaciones" (Google Sheets). ${dataMode === 'live' ? 'Conectado en vivo a tu Google Drive.' : 'Mostrando snapshot embebido.'}`;
+    `Fuente: planilla "Cotizaciones" (Google Sheets). ${dataMode === 'live' ? 'Conectado en vivo a tu Google Drive.' : 'Mostrando snapshot embebido.'} Contexto semanal de oferta/demanda: snapshot del ${WEEKLY_CBA_SNAPSHOT_DATE}, actualizado manualmente.`;
+}
+
+// ============================================================
+// Weekly business context (Córdoba, whole city) — static snapshot
+// ============================================================
+function weekShort(w) { return "S" + w.week_label.split(" ")[1]; }
+
+function renderWeeklyDesc() {
+  document.getElementById('weekly-desc').textContent =
+    `Estimaciones y disponibilidad de conductores de Cabify en toda Córdoba (no solo las 4 rutas de arriba), semana a semana. Snapshot manual del ${WEEKLY_CBA_SNAPSHOT_DATE}; para actualizarlo hay que volver a pedirlo.`;
+}
+
+function weeklyDelta(curr, prev, higherIsGood) {
+  if (curr === null || prev === null || prev === undefined || curr === undefined) return null;
+  const diff = curr - prev;
+  const pct = prev !== 0 ? (diff / Math.abs(prev)) * 100 : null;
+  const dir = diff > 0 ? 'up' : diff < 0 ? 'down' : null;
+  let cls = '';
+  if (higherIsGood !== undefined && dir) cls = (dir === 'up') === higherIsGood ? 'up' : 'down';
+  return {diff, pct, dir, cls};
+}
+
+function renderWeeklyStats() {
+  const row = document.getElementById('weekly-stat-row');
+  row.innerHTML = "";
+  const n = WEEKLY_CBA_DATA.length;
+  const curr = WEEKLY_CBA_DATA[n-1];
+  const prev = WEEKLY_CBA_DATA[n-2];
+
+  const tiles = [
+    {label: `Estimaciones (${weekShort(curr)})`, value: fmtInt(curr.estimaciones), d: weeklyDelta(curr.estimaciones, prev.estimaciones)},
+    {label: "Drivers activos", value: fmtInt(curr.drivers_activos), d: weeklyDelta(curr.drivers_activos, prev.drivers_activos, true)},
+    {label: "Horas trabajadas", value: fmtInt(curr.working_hours), d: weeklyDelta(curr.working_hours, prev.working_hours, true)},
+    {label: "% Conversión a viaje", value: fmtPct(curr.conversion_rate), d: weeklyDelta(curr.conversion_rate, prev.conversion_rate, true)},
+    {label: "% Éxito (Success Rate)", value: fmtPct(curr.success_rate), d: weeklyDelta(curr.success_rate, prev.success_rate, true)},
+  ];
+  tiles.forEach(t => {
+    const el = document.createElement('div');
+    el.className = 'stat-tile panel';
+    const l = document.createElement('div'); l.className = 'label'; l.textContent = t.label;
+    const v = document.createElement('div'); v.className = 'value'; v.textContent = t.value;
+    el.appendChild(l); el.appendChild(v);
+    if (t.d && t.d.pct !== null) {
+      const delta = document.createElement('div');
+      delta.className = 'delta' + (t.d.cls ? ' ' + t.d.cls : '');
+      delta.textContent = (t.d.pct > 0 ? '+' : '') + t.d.pct.toFixed(1) + '% vs semana anterior';
+      el.appendChild(delta);
+    }
+    row.appendChild(el);
+  });
+}
+
+const WW = 480, WH = 200, WPAD = {top: 10, right: 16, bottom: 26, left: 52};
+
+function weeklyAxisX(svg, svgNS, n, xAt) {
+  [0, Math.floor((n-1)/2), n-1].forEach(i => {
+    const text = document.createElementNS(svgNS, "text");
+    text.setAttribute("class", "axis-text");
+    text.setAttribute("x", xAt(i)); text.setAttribute("y", WH - 6);
+    text.setAttribute("text-anchor", "middle");
+    text.textContent = weekShort(WEEKLY_CBA_DATA[i]);
+    svg.appendChild(text);
+  });
+}
+
+function buildWeeklyBarChart(key, colorVar, fmt) {
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${WW} ${WH}`);
+  svg.setAttribute("class", "chart");
+
+  const vals = WEEKLY_CBA_DATA.map(w => w[key]).filter(v => v !== null && v !== undefined);
+  const vMax = (vals.length ? Math.max(...vals) : 1) * 1.15;
+  const n = WEEKLY_CBA_DATA.length;
+  const bandW = (WW - WPAD.left - WPAD.right) / n;
+  const xAt = i => WPAD.left + bandW * i + bandW/2;
+  const y = v => WH - WPAD.bottom - (v / vMax) * (WH - WPAD.top - WPAD.bottom);
+
+  [0, vMax*0.5, vMax].forEach(v => {
+    const gy = y(v);
+    const line = document.createElementNS(svgNS, "line");
+    line.setAttribute("class", "gridline");
+    line.setAttribute("x1", WPAD.left); line.setAttribute("x2", WW - WPAD.right);
+    line.setAttribute("y1", gy); line.setAttribute("y2", gy);
+    svg.appendChild(line);
+    const text = document.createElementNS(svgNS, "text");
+    text.setAttribute("class", "axis-text");
+    text.setAttribute("x", WPAD.left - 6); text.setAttribute("y", gy + 3);
+    text.setAttribute("text-anchor", "end");
+    text.textContent = fmt ? fmt(v) : fmtInt(v);
+    svg.appendChild(text);
+  });
+
+  const tooltip = document.getElementById('tooltip');
+  WEEKLY_CBA_DATA.forEach((w, i) => {
+    const v = w[key];
+    if (v === null || v === undefined) return;
+    const barW = Math.min(bandW * 0.6, 34);
+    const bx = xAt(i) - barW/2;
+    const by = y(v);
+    const isLast = i === n - 1;
+    const rect = document.createElementNS(svgNS, "rect");
+    rect.setAttribute("class", "bar-mark");
+    rect.setAttribute("x", bx); rect.setAttribute("y", by);
+    rect.setAttribute("width", barW); rect.setAttribute("height", Math.max(WH - WPAD.bottom - by, 1));
+    rect.setAttribute("rx", 3);
+    rect.setAttribute("fill", colorVar);
+    rect.setAttribute("opacity", isLast ? 1 : 0.55);
+    svg.appendChild(rect);
+
+    rect.addEventListener('pointerenter', (ev) => {
+      tooltip.style.display = 'block';
+      tooltip.style.left = (ev.clientX + 14) + 'px';
+      tooltip.style.top = (ev.clientY + 14) + 'px';
+      tooltip.innerHTML = '';
+      const timeEl = document.createElement('div'); timeEl.className = 't-time'; timeEl.textContent = `Semana ${weekShort(w)} · ${w.date}`;
+      tooltip.appendChild(timeEl);
+      const row = document.createElement('div'); row.className = 't-row';
+      const keyEl = document.createElement('span'); keyEl.className = 't-key'; keyEl.style.background = colorVar;
+      const valEl = document.createElement('span'); valEl.className = 't-val'; valEl.textContent = fmt ? fmt(v) : fmtInt(v);
+      row.appendChild(keyEl); row.appendChild(valEl);
+      tooltip.appendChild(row);
+    });
+    rect.addEventListener('pointermove', (ev) => {
+      tooltip.style.left = (ev.clientX + 14) + 'px';
+      tooltip.style.top = (ev.clientY + 14) + 'px';
+    });
+    rect.addEventListener('pointerleave', () => { tooltip.style.display = 'none'; });
+  });
+
+  weeklyAxisX(svg, svgNS, n, xAt);
+  return svg;
+}
+
+function buildWeeklyLineChart(seriesDefs, fmt) {
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${WW} ${WH}`);
+  svg.setAttribute("class", "chart");
+
+  const n = WEEKLY_CBA_DATA.length;
+  const vals = [];
+  seriesDefs.forEach(s => WEEKLY_CBA_DATA.forEach(w => { if (w[s.key] !== null && w[s.key] !== undefined) vals.push(w[s.key]); }));
+  const vMax = (vals.length ? Math.max(...vals) : 1) * 1.15;
+  const bandW = (WW - WPAD.left - WPAD.right) / n;
+  const xAt = i => WPAD.left + bandW * i + bandW/2;
+  const y = v => WH - WPAD.bottom - (v / vMax) * (WH - WPAD.top - WPAD.bottom);
+
+  [0, vMax*0.5, vMax].forEach(v => {
+    const gy = y(v);
+    const line = document.createElementNS(svgNS, "line");
+    line.setAttribute("class", "gridline");
+    line.setAttribute("x1", WPAD.left); line.setAttribute("x2", WW - WPAD.right);
+    line.setAttribute("y1", gy); line.setAttribute("y2", gy);
+    svg.appendChild(line);
+    const text = document.createElementNS(svgNS, "text");
+    text.setAttribute("class", "axis-text");
+    text.setAttribute("x", WPAD.left - 6); text.setAttribute("y", gy + 3);
+    text.setAttribute("text-anchor", "end");
+    text.textContent = fmt ? fmt(v) : fmtInt(v);
+    svg.appendChild(text);
+  });
+
+  seriesDefs.forEach(s => {
+    let d = "", drawing = false;
+    WEEKLY_CBA_DATA.forEach((w, i) => {
+      const v = w[s.key];
+      if (v === null || v === undefined) { drawing = false; return; }
+      d += `${drawing ? "L" : "M"}${xAt(i).toFixed(1)},${y(v).toFixed(1)} `;
+      drawing = true;
+    });
+    const path = document.createElementNS(svgNS, "path");
+    path.setAttribute("d", d.trim());
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", s.colorVar);
+    path.setAttribute("stroke-width", "2");
+    path.setAttribute("stroke-linecap", "round");
+    path.setAttribute("stroke-linejoin", "round");
+    svg.appendChild(path);
+  });
+
+  const tooltip = document.getElementById('tooltip');
+  WEEKLY_CBA_DATA.forEach((w, i) => {
+    seriesDefs.forEach(s => {
+      const v = w[s.key];
+      if (v === null || v === undefined) return;
+      const dot = document.createElementNS(svgNS, "circle");
+      dot.setAttribute("cx", xAt(i)); dot.setAttribute("cy", y(v)); dot.setAttribute("r", 8);
+      dot.setAttribute("fill", "transparent");
+      dot.style.cursor = 'pointer';
+      dot.addEventListener('pointerenter', (ev) => {
+        tooltip.style.display = 'block';
+        tooltip.style.left = (ev.clientX + 14) + 'px';
+        tooltip.style.top = (ev.clientY + 14) + 'px';
+        tooltip.innerHTML = '';
+        const timeEl = document.createElement('div'); timeEl.className = 't-time'; timeEl.textContent = `Semana ${weekShort(w)} · ${w.date}`;
+        tooltip.appendChild(timeEl);
+        seriesDefs.forEach(s2 => {
+          if (w[s2.key] === null || w[s2.key] === undefined) return;
+          const row = document.createElement('div'); row.className = 't-row';
+          const keyEl = document.createElement('span'); keyEl.className = 't-key'; keyEl.style.background = s2.colorVar;
+          const valEl = document.createElement('span'); valEl.className = 't-val'; valEl.textContent = fmt ? fmt(w[s2.key]) : fmtInt(w[s2.key]);
+          const nameEl = document.createElement('span'); nameEl.className = 't-name'; nameEl.textContent = s2.name;
+          row.appendChild(keyEl); row.appendChild(valEl); row.appendChild(nameEl);
+          tooltip.appendChild(row);
+        });
+      });
+      dot.addEventListener('pointerleave', () => { tooltip.style.display = 'none'; });
+      svg.appendChild(dot);
+    });
+  });
+
+  const visDots = seriesDefs.map(s => {
+    for (let i = n-1; i >= 0; i--) {
+      if (WEEKLY_CBA_DATA[i][s.key] !== null && WEEKLY_CBA_DATA[i][s.key] !== undefined) {
+        const dot = document.createElementNS(svgNS, "circle");
+        dot.setAttribute("cx", xAt(i)); dot.setAttribute("cy", y(WEEKLY_CBA_DATA[i][s.key])); dot.setAttribute("r", 4);
+        dot.setAttribute("fill", s.colorVar);
+        dot.setAttribute("stroke", cssVar('--surface-1'));
+        dot.setAttribute("stroke-width", 2);
+        svg.appendChild(dot);
+        break;
+      }
+    }
+  });
+
+  weeklyAxisX(svg, svgNS, n, xAt);
+  return svg;
+}
+
+function renderWeeklySection() {
+  renderWeeklyDesc();
+  renderWeeklyStats();
+
+  const grid = document.getElementById('weekly-chart-grid');
+  grid.innerHTML = "";
+
+  const cards = [
+    {title: "Estimaciones por semana", note: "Demanda total de Cabify en Córdoba (toda la ciudad)", build: () => buildWeeklyBarChart('estimaciones', 'var(--series-cabify)')},
+    {title: "Drivers activos por semana", note: "Disponibilidad de conductores (oferta)", build: () => buildWeeklyLineChart([{key:'drivers_activos', name:'Drivers activos', colorVar:'var(--series-cabify)'}])},
+    {title: "% Conversión y % Éxito", note: "", build: () => buildWeeklyLineChart([
+      {key:'conversion_rate', name:'% Conversión', colorVar:'var(--series-cabify)'},
+      {key:'success_rate', name:'% Éxito', colorVar:'var(--series-uber)'},
+    ], v => (v*100).toFixed(0) + '%'), legend: [
+      {name: '% Conversión a pedido', colorVar: 'var(--series-cabify)'},
+      {name: '% Éxito (viajes completados)', colorVar: 'var(--series-uber)'},
+    ]},
+    {title: "Horas trabajadas por semana", note: "Horas totales conectadas de conductores", build: () => buildWeeklyLineChart([{key:'working_hours', name:'Working hours', colorVar:'var(--series-uber)'}])},
+  ];
+
+  cards.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'chart-card panel';
+    const h3 = document.createElement('h3'); h3.textContent = c.title;
+    card.appendChild(h3);
+    if (c.legend) {
+      const legend = document.createElement('div');
+      legend.className = 'legend';
+      legend.style.margin = '2px 0 8px';
+      legend.style.fontSize = '0.75rem';
+      c.legend.forEach(({name, colorVar}) => {
+        const item = document.createElement('span'); item.className = 'legend-item';
+        const sw = document.createElement('span'); sw.className = 'legend-swatch'; sw.style.background = colorVar;
+        item.appendChild(sw); item.appendChild(document.createTextNode(name));
+        legend.appendChild(item);
+      });
+      card.appendChild(legend);
+    } else {
+      const note = document.createElement('p'); note.className = 'chart-note'; note.textContent = c.note;
+      card.appendChild(note);
+    }
+    card.appendChild(c.build());
+    grid.appendChild(card);
+  });
+
+  const table = document.getElementById('weekly-table');
+  table.innerHTML = "";
+  const thead = document.createElement('thead');
+  const headRow = document.createElement('tr');
+  ["Semana", "Fecha", "Estimaciones", "RE", "DO", "%CR", "%SR", "Drivers activos", "Drivers nuevos", "Drivers churn", "Usuarios activos", "Working hours"].forEach(h => {
+    const th = document.createElement('th'); th.textContent = h; headRow.appendChild(th);
+  });
+  thead.appendChild(headRow);
+  table.appendChild(thead);
+  const tbody = document.createElement('tbody');
+  [...WEEKLY_CBA_DATA].reverse().forEach(w => {
+    const tr = document.createElement('tr');
+    [
+      weekShort(w), w.date, fmtInt(w.estimaciones), fmtInt(w.re), fmtInt(w.do),
+      fmtPct(w.conversion_rate), fmtPct(w.success_rate), fmtInt(w.drivers_activos),
+      fmtInt(w.drivers_nuevos), fmtInt(w.drivers_churn), fmtInt(w.usuarios_activos), fmtInt(w.working_hours),
+    ].forEach(c => { const td = document.createElement('td'); td.textContent = c; tr.appendChild(td); });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
 }
 
 // ============================================================
@@ -1120,6 +1492,7 @@ async function initLive() {
 buildFilterBar();
 buildRouteChips();
 renderAll();
+renderWeeklySection();
 renderLiveStatus();
 initLive();
 </script>
