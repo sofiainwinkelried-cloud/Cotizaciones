@@ -266,6 +266,44 @@
   .scroll-wrap { max-width: 100%; overflow-x: auto; max-height: 480px; overflow-y: auto; border-radius: 8px; }
 
   footer.note { color: var(--text-muted); font-size: 0.78rem; margin-top: 12px; }
+
+  /* ---- Tabs ---- */
+  .tabs { display: flex; gap: 6px; margin: 0 0 24px; border-bottom: 1px solid var(--border); }
+  .tab-btn {
+    font-family: inherit; font-size: 0.88rem; font-weight: 650; color: var(--text-secondary);
+    background: transparent; border: none; border-bottom: 2px solid transparent;
+    padding: 10px 4px; margin-bottom: -1px; cursor: pointer; transition: color 0.15s ease;
+  }
+  .tab-btn + .tab-btn { margin-left: 18px; }
+  .tab-btn:hover { color: var(--text-primary); }
+  .tab-btn[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-panel[hidden] { display: none; }
+
+  /* ---- Heatmaps ---- */
+  table.heatmap { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+  table.heatmap th, table.heatmap td {
+    text-align: center; padding: 6px 4px; font-variant-numeric: tabular-nums;
+    border: 1px solid var(--page);
+  }
+  table.heatmap thead th { color: var(--text-secondary); font-weight: 650; font-size: 0.72rem; }
+  table.heatmap tbody th {
+    text-align: right; padding-right: 10px; color: var(--text-muted); font-weight: 600; font-size: 0.72rem;
+  }
+  table.heatmap td.cell { color: var(--text-primary); font-weight: 600; border-radius: 4px; }
+  table.heatmap td.cell.empty { color: var(--text-muted); font-weight: 400; background: transparent !important; }
+  table.heatmap tr.total-row th, table.heatmap tr.total-row td, table.heatmap td.total-col {
+    background: var(--chip-bg); font-weight: 700;
+  }
+  .heatmap-wrap { overflow-x: auto; }
+
+  .narrative-card {
+    padding: 16px 18px;
+    margin-bottom: 12px;
+  }
+  .narrative-card h4 { margin: 0 0 8px; font-size: 0.95rem; font-weight: 700; }
+  .narrative-card p { margin: 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+  .narrative-card p b { color: var(--text-primary); }
+  .narrative-card .quote-line { margin-top: 8px; font-size: 0.8rem; color: var(--text-muted); font-style: italic; }
 </style>
 
 <div class="viz-root">
@@ -318,50 +356,86 @@
   </div>
   <p class="filter-note" id="filter-note"></p>
 
+  <div class="tabs" id="tabs" role="tablist">
+    <button class="tab-btn" role="tab" data-tab="cotizaciones" aria-selected="true">Cotizaciones</button>
+    <button class="tab-btn" role="tab" data-tab="oferta" aria-selected="false">Oferta y demanda</button>
+    <button class="tab-btn" role="tab" data-tab="patrones" aria-selected="false">Patrones y cruce</button>
+  </div>
+
   <div class="content-wrap" id="content-wrap">
-    <div class="section-block">
-      <div class="stat-row" id="stat-row"></div>
-      <div class="legend" id="legend"></div>
-      <div class="chart-grid" id="chart-grid"></div>
-    </div>
-
-    <div class="section-block">
-      <div class="section-head">
-        <p class="eyebrow">Comparación de precio</p>
-        <h2 class="section-title">Gap promedio Cabify vs Uber por ruta</h2>
-        <p class="section-desc">Gap = (Precio Cabify − Precio Uber) / Precio Uber. Negativo (azul) = Cabify más barata que Uber en promedio.</p>
+    <div class="tab-panel" id="tab-cotizaciones" role="tabpanel">
+      <div class="section-block">
+        <div class="stat-row" id="stat-row"></div>
+        <div class="legend" id="legend"></div>
+        <div class="chart-grid" id="chart-grid"></div>
       </div>
-      <div class="bar-chart-card panel" id="bar-chart-card">
-        <div id="bar-chart"></div>
-      </div>
-    </div>
 
-    <hr class="divider">
-
-    <div class="section-block" id="weekly-section">
-      <div class="section-head">
-        <p class="eyebrow">Contexto de negocio · ciudad completa</p>
-        <h2 class="section-title">Oferta y demanda semanal — Cabify Córdoba</h2>
-        <p class="section-desc" id="weekly-desc"></p>
+      <div class="section-block">
+        <div class="section-head">
+          <p class="eyebrow">Comparación de precio</p>
+          <h2 class="section-title">Gap promedio Cabify vs Uber por ruta</h2>
+          <p class="section-desc">Gap = (Precio Cabify − Precio Uber) / Precio Uber. Negativo (azul) = Cabify más barata que Uber en promedio.</p>
+        </div>
+        <div class="bar-chart-card panel" id="bar-chart-card">
+          <div id="bar-chart"></div>
+        </div>
       </div>
-      <div class="stat-row" id="weekly-stat-row"></div>
-      <div class="chart-grid" id="weekly-chart-grid"></div>
-      <details class="table-view panel" style="margin-top:18px;">
-        <summary>Ver tabla semanal completa</summary>
+
+      <details class="table-view panel">
+        <summary>Ver cotizaciones en tabla</summary>
         <div class="scroll-wrap">
-          <table class="data-table" id="weekly-table"></table>
+          <table class="data-table" id="data-table"></table>
         </div>
       </details>
     </div>
 
-    <hr class="divider">
-
-    <details class="table-view panel">
-      <summary>Ver cotizaciones en tabla</summary>
-      <div class="scroll-wrap">
-        <table class="data-table" id="data-table"></table>
+    <div class="tab-panel" id="tab-oferta" role="tabpanel" hidden>
+      <div class="section-block" id="weekly-section" style="margin-bottom:0;">
+        <div class="section-head">
+          <p class="eyebrow">Contexto de negocio · ciudad completa</p>
+          <h2 class="section-title">Oferta y demanda semanal — Cabify Córdoba</h2>
+          <p class="section-desc" id="weekly-desc"></p>
+        </div>
+        <div class="stat-row" id="weekly-stat-row"></div>
+        <div class="chart-grid" id="weekly-chart-grid"></div>
+        <details class="table-view panel" style="margin-top:18px;">
+          <summary>Ver tabla semanal completa</summary>
+          <div class="scroll-wrap">
+            <table class="data-table" id="weekly-table"></table>
+          </div>
+        </details>
       </div>
-    </details>
+    </div>
+
+    <div class="tab-panel" id="tab-patrones" role="tabpanel" hidden>
+      <div class="section-block">
+        <div class="section-head">
+          <p class="eyebrow">Cruce oferta/demanda × cotizaciones</p>
+          <h2 class="section-title">¿Qué relación hay?</h2>
+          <p class="section-desc" id="cruce-desc"></p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-head">
+          <p class="eyebrow">Patrones por hora y día</p>
+          <h2 class="section-title">Heatmaps de cotizaciones</h2>
+          <p class="section-desc">Lunes a domingo en columnas, hora del día en filas. Celdas grises = sin cotizaciones capturadas todavía en ese cruce hora/día.</p>
+        </div>
+        <div class="chart-grid" id="heatmap-grid" style="align-items:start;"></div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="section-block">
+        <div class="section-head">
+          <p class="eyebrow">Resumen semanal de negocio</p>
+          <h2 class="section-title">Semana a semana — Córdoba</h2>
+          <p class="section-desc">Generado automáticamente a partir de la tabla de "Oferta y demanda". Cada tarjeta compara la semana con la anterior e intenta sumar el gap de precio Cabify/Uber capturado esa misma semana.</p>
+        </div>
+        <div id="narrative-list"></div>
+      </div>
+    </div>
   </div>
 
   <footer class="note" id="source-note"></footer>
@@ -1309,6 +1383,7 @@ function renderAll() {
   renderBarChart(data);
   renderTable(data);
   updateFilterNote();
+  renderPatronesSection(data);
 }
 
 // ============================================================
@@ -1487,10 +1562,270 @@ async function initLive() {
 }
 
 // ============================================================
+// Tabs
+// ============================================================
+function initTabs() {
+  const buttons = [...document.querySelectorAll('.tab-btn')];
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.setAttribute('aria-selected', 'false'));
+      btn.setAttribute('aria-selected', 'true');
+      document.querySelectorAll('.tab-panel').forEach(p => { p.hidden = true; });
+      document.getElementById('tab-' + btn.dataset.tab).hidden = false;
+    });
+  });
+}
+
+// ============================================================
+// Color helpers for heatmaps
+// ============================================================
+function isDarkMode() {
+  const t = document.documentElement.getAttribute('data-theme');
+  if (t === 'dark') return true;
+  if (t === 'light') return false;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+function hexToRgb(hex) {
+  const h = hex.replace('#', '');
+  return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+}
+function lerpColor(hexA, hexB, t) {
+  const a = hexToRgb(hexA), b = hexToRgb(hexB);
+  const c = a.map((v,i) => Math.round(v + (b[i]-v)*Math.max(0, Math.min(1, t))));
+  return '#' + c.map(v => v.toString(16).padStart(2,'0')).join('');
+}
+
+const HEATMAP_PALETTE = {
+  light: {seqLow: '#e3edfb', seqHigh: '#184f95', divNeg: '#2a78d6', divPos: '#e34948', text: '#0b0b0b'},
+  dark:  {seqLow: '#20364f', seqHigh: '#86b6ef', divNeg: '#3987e5', divPos: '#e66767', text: '#ffffff'},
+};
+
+function sequentialColor(t) {
+  const p = isDarkMode() ? HEATMAP_PALETTE.dark : HEATMAP_PALETTE.light;
+  return lerpColor(p.seqLow, p.seqHigh, t);
+}
+function divergingColor(t) {
+  // t in [-1, 1]; 0 = neutral (no fill)
+  const p = isDarkMode() ? HEATMAP_PALETTE.dark : HEATMAP_PALETTE.light;
+  if (t >= 0) return lerpColor(cssVar('--surface-1') || '#ffffff', p.divPos, Math.min(1, t));
+  return lerpColor(cssVar('--surface-1') || '#ffffff', p.divNeg, Math.min(1, -t));
+}
+function textColorOn(bgHex, fallback) {
+  const [r,g,b] = hexToRgb(bgHex);
+  const luminance = (0.299*r + 0.587*g + 0.114*b) / 255;
+  return luminance > 0.55 ? '#0b0b0b' : '#ffffff';
+}
+
+// ============================================================
+// Heatmaps: hour (rows) x day of week (cols), Lu..Do
+// ============================================================
+const DOW_ORDER_MON = [1,2,3,4,5,6,0];
+const DOW_SHORT_MON = ["Lu","Ma","Mi","Ju","Vi","Sá","Do"];
+
+function buildHeatmap(config) {
+  // config: {title, cellFor(hour,dowIdx) -> {value, display, count}, colorFor(value,max) -> hex|null, maxOverride}
+  const grid = [];
+  let max = 0;
+  for (let h = 0; h < 24; h++) {
+    const row = [];
+    for (let c = 0; c < 7; c++) {
+      const cell = config.cellFor(h, DOW_ORDER_MON[c]);
+      if (cell && cell.value !== null && cell.value !== undefined) max = Math.max(max, Math.abs(cell.value));
+      row.push(cell);
+    }
+    grid.push(row);
+  }
+  if (config.maxOverride) max = config.maxOverride;
+
+  const table = document.createElement('table');
+  table.className = 'heatmap';
+  const thead = document.createElement('thead');
+  const headRow = document.createElement('tr');
+  headRow.appendChild(document.createElement('th'));
+  DOW_SHORT_MON.forEach(d => { const th = document.createElement('th'); th.textContent = d; headRow.appendChild(th); });
+  const totalTh = document.createElement('th'); totalTh.textContent = 'Total'; headRow.appendChild(totalTh);
+  thead.appendChild(headRow);
+  table.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
+  for (let h = 0; h < 24; h++) {
+    const tr = document.createElement('tr');
+    const th = document.createElement('th'); th.textContent = String(h).padStart(2,'0') + 'h'; tr.appendChild(th);
+    const rowVals = [];
+    for (let c = 0; c < 7; c++) {
+      const cell = grid[h][c];
+      const td = document.createElement('td');
+      td.className = 'cell';
+      if (!cell || cell.value === null || cell.value === undefined) {
+        td.className += ' empty';
+        td.textContent = '—';
+      } else {
+        rowVals.push(cell.value);
+        const bg = config.colorFor(cell.value, max);
+        td.style.background = bg;
+        td.style.color = textColorOn(bg);
+        td.textContent = cell.display;
+        td.title = `${DOW_SHORT_MON[c]} ${String(h).padStart(2,'0')}h — ${cell.display}${cell.count !== undefined ? ` (n=${cell.count})` : ''}`;
+      }
+      tr.appendChild(td);
+    }
+    const totalTd = document.createElement('td');
+    totalTd.className = 'cell total-col';
+    if (rowVals.length) {
+      const avg = rowVals.reduce((a,b)=>a+b,0) / rowVals.length;
+      totalTd.textContent = config.formatTotal ? config.formatTotal(avg) : avg.toFixed(0);
+    } else {
+      totalTd.className += ' empty';
+      totalTd.textContent = '—';
+    }
+    tr.appendChild(totalTd);
+    tbody.appendChild(tr);
+  }
+  table.appendChild(tbody);
+
+  // column totals row
+  const totalRow = document.createElement('tr');
+  totalRow.className = 'total-row';
+  const cornerTh = document.createElement('th'); cornerTh.textContent = 'Total'; totalRow.appendChild(cornerTh);
+  for (let c = 0; c < 7; c++) {
+    const colVals = [];
+    for (let h = 0; h < 24; h++) {
+      const cell = grid[h][c];
+      if (cell && cell.value !== null && cell.value !== undefined) colVals.push(cell.value);
+    }
+    const td = document.createElement('td'); td.className = 'cell';
+    if (colVals.length) {
+      const avg = colVals.reduce((a,b)=>a+b,0) / colVals.length;
+      td.textContent = config.formatTotal ? config.formatTotal(avg) : avg.toFixed(0);
+    } else { td.className += ' empty'; td.textContent = '—'; }
+    totalRow.appendChild(td);
+  }
+  const grandTd = document.createElement('td'); grandTd.className = 'cell';
+  const allVals = grid.flat().filter(c => c && c.value !== null && c.value !== undefined).map(c => c.value);
+  grandTd.textContent = allVals.length ? (config.formatTotal ? config.formatTotal(allVals.reduce((a,b)=>a+b,0)/allVals.length) : (allVals.reduce((a,b)=>a+b,0)/allVals.length).toFixed(0)) : '—';
+  totalRow.appendChild(grandTd);
+  tbody.appendChild(totalRow);
+
+  const wrap = document.createElement('div');
+  wrap.className = 'heatmap-wrap';
+  wrap.appendChild(table);
+  return wrap;
+}
+
+function renderPatronesSection(data) {
+  document.getElementById('cruce-desc').textContent =
+    'La tabla de "Oferta y demanda" es semanal (última semana con datos: la del 13/7). Las cotizaciones que estamos capturando arrancaron el 27/7, dos semanas después — todavía no hay una sola semana en común entre ambas fuentes, así que hoy no se puede decir "esta semana bajaron los drivers y por eso subió el precio". Lo que sí se puede armar ya: patrones de precio por hora/día con lo que tenemos, y el resumen semanal de negocio (abajo) lo suficientemente automatizado para que, en cuanto haya cotizaciones de una semana con reporte de negocio, se junten solas.';
+
+  const grid = document.getElementById('heatmap-grid');
+  grid.innerHTML = '';
+
+  // Heatmap 1: coverage (count of quotes)
+  const countCard = document.createElement('div');
+  countCard.className = 'chart-card panel';
+  countCard.innerHTML = '<h3>Cobertura de cotizaciones</h3><p class="chart-note">Cantidad de cotizaciones capturadas por hora y día (con los filtros actuales)</p>';
+  countCard.appendChild(buildHeatmap({
+    cellFor: (h, dow) => {
+      const rows = data.filter(d => d.t.getHours() === h && d.t.getDay() === dow);
+      return rows.length ? {value: rows.length, display: String(rows.length), count: rows.length} : {value: null};
+    },
+    colorFor: (v, max) => sequentialColor(max ? v / max : 0),
+    formatTotal: v => v.toFixed(1),
+  }));
+  grid.appendChild(countCard);
+
+  // Heatmap 2: avg gap % Cabify vs Uber
+  const gapCard = document.createElement('div');
+  gapCard.className = 'chart-card panel';
+  gapCard.innerHTML = '<h3>Gap Cabify vs Uber</h3><p class="chart-note">Promedio (%) por hora y día. Azul = Cabify más barata, rojo = Cabify más cara</p>';
+  gapCard.appendChild(buildHeatmap({
+    cellFor: (h, dow) => {
+      const rows = data.filter(d => d.t.getHours() === h && d.t.getDay() === dow && d.cabify !== null && d.uber !== null);
+      if (!rows.length) return {value: null};
+      const gaps = rows.map(r => (r.cabify - r.uber) / r.uber * 100);
+      const avg = gaps.reduce((a,b)=>a+b,0) / gaps.length;
+      return {value: avg, display: (avg>0?'+':'') + avg.toFixed(0) + '%', count: rows.length};
+    },
+    colorFor: (v) => divergingColor(v / 50), // 50pp treated as strong saturation
+    formatTotal: v => (v>0?'+':'') + v.toFixed(1) + '%',
+  }));
+  grid.appendChild(gapCard);
+
+  renderWeeklyNarrative();
+}
+
+// ============================================================
+// Weekly narrative — auto-generated prose per week, cross-referenced
+// with whatever quote data falls in that same calendar week (Mon-Sun)
+// ============================================================
+function pctDeltaStr(curr, prev) {
+  if (curr === null || prev === null || prev === undefined || curr === undefined || prev === 0) return null;
+  const pct = (curr - prev) / Math.abs(prev) * 100;
+  return (pct > 0 ? '+' : '') + pct.toFixed(1) + '%';
+}
+function ppDeltaStr(curr, prev) {
+  if (curr === null || prev === null || prev === undefined || curr === undefined) return null;
+  const pp = (curr - prev) * 100;
+  return (pp > 0 ? '+' : '') + pp.toFixed(1) + ' pp';
+}
+
+function quoteStatsForWeek(weekStartDate) {
+  const start = new Date(weekStartDate + 'T00:00:00');
+  const end = new Date(start); end.setDate(end.getDate() + 7);
+  const rows = RAW.filter(d => d.t >= start && d.t < end && d.cabify !== null && d.uber !== null);
+  if (!rows.length) return null;
+  const gaps = rows.map(r => (r.cabify - r.uber) / r.uber * 100);
+  return {n: rows.length, avgGap: gaps.reduce((a,b)=>a+b,0) / gaps.length};
+}
+
+function renderWeeklyNarrative() {
+  const list = document.getElementById('narrative-list');
+  list.innerHTML = '';
+  const weeks = [...WEEKLY_CBA_DATA].reverse(); // most recent first
+  weeks.forEach((w, idxRev) => {
+    const idx = WEEKLY_CBA_DATA.length - 1 - idxRev;
+    const prev = idx > 0 ? WEEKLY_CBA_DATA[idx-1] : null;
+    if (!prev) return; // skip first week, nothing to compare against
+
+    const card = document.createElement('div');
+    card.className = 'narrative-card panel';
+    const h4 = document.createElement('h4');
+    h4.textContent = `Semana ${weekShort(w)} (desde el ${w.date})`;
+    card.appendChild(h4);
+
+    const p = document.createElement('p');
+    const parts = [];
+    if (w.estimaciones !== null && prev.estimaciones !== null) {
+      parts.push(`<b>${fmtInt(w.estimaciones)}</b> estimaciones (${pctDeltaStr(w.estimaciones, prev.estimaciones)} vs semana anterior)`);
+    }
+    parts.push(`<b>${fmtInt(w.drivers_activos)}</b> drivers activos (${pctDeltaStr(w.drivers_activos, prev.drivers_activos)}), con <b>${fmtInt(w.drivers_nuevos)}</b> altas nuevas, <b>${fmtInt(w.drivers_churn)}</b> bajas y <b>${fmtInt(w.drivers_reactivados)}</b> reactivados`);
+    parts.push(`<b>${fmtInt(w.usuarios_activos)}</b> usuarios activos (${pctDeltaStr(w.usuarios_activos, prev.usuarios_activos)})`);
+    if (w.conversion_rate !== null && prev.conversion_rate !== null) {
+      parts.push(`% conversión a pedido <b>${fmtPct(w.conversion_rate)}</b> (${ppDeltaStr(w.conversion_rate, prev.conversion_rate)})`);
+    }
+    parts.push(`% éxito <b>${fmtPct(w.success_rate)}</b> (${ppDeltaStr(w.success_rate, prev.success_rate)})`);
+    parts.push(`<b>${fmtInt(w.working_hours)}</b> horas trabajadas (${pctDeltaStr(w.working_hours, prev.working_hours)})`);
+    p.innerHTML = parts.join('. ') + '.';
+    card.appendChild(p);
+
+    const qs = quoteStatsForWeek(w.date);
+    const quoteLine = document.createElement('p');
+    quoteLine.className = 'quote-line';
+    quoteLine.textContent = qs
+      ? `Cotizaciones capturadas esa semana: ${qs.n}, gap Cabify vs Uber promedio ${(qs.avgGap>0?'+':'')}${qs.avgGap.toFixed(1)}%.`
+      : 'Sin cotizaciones propias capturadas esa semana (todavía no solapa con lo que estamos scrapeando).';
+    card.appendChild(quoteLine);
+
+    list.appendChild(card);
+  });
+}
+
+// ============================================================
 // Boot
 // ============================================================
 buildFilterBar();
 buildRouteChips();
+initTabs();
 renderAll();
 renderWeeklySection();
 renderLiveStatus();
