@@ -12,9 +12,15 @@
     --border: rgba(11,11,11,0.10);
     --series-cabify: #2a78d6;
     --series-uber: #eb6834;
+    --series-didi: #1baf7a;
     --div-neg: #2a78d6;
     --div-pos: #e34948;
-    --good: #006300;
+    --good: #0ca30c;
+    --warning: #fab219;
+    --critical: #d03b3b;
+    --chip-bg: #f0efec;
+    --chip-bg-active: #2a78d6;
+    --chip-text-active: #ffffff;
   }
   @media (prefers-color-scheme: dark) {
     :root:where(:not([data-theme="light"])) .viz-root {
@@ -29,9 +35,15 @@
       --border: rgba(255,255,255,0.10);
       --series-cabify: #3987e5;
       --series-uber: #d95926;
+      --series-didi: #199e70;
       --div-neg: #3987e5;
       --div-pos: #e66767;
       --good: #0ca30c;
+      --warning: #fab219;
+      --critical: #e66767;
+      --chip-bg: #26261f;
+      --chip-bg-active: #3987e5;
+      --chip-text-active: #ffffff;
     }
   }
   :root[data-theme="dark"] .viz-root {
@@ -46,9 +58,15 @@
     --border: rgba(255,255,255,0.10);
     --series-cabify: #3987e5;
     --series-uber: #d95926;
+    --series-didi: #199e70;
     --div-neg: #3987e5;
     --div-pos: #e66767;
     --good: #0ca30c;
+    --warning: #fab219;
+    --critical: #e66767;
+    --chip-bg: #26261f;
+    --chip-bg-active: #3987e5;
+    --chip-text-active: #ffffff;
   }
 
   * { box-sizing: border-box; }
@@ -57,11 +75,39 @@
     color: var(--text-primary);
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
     padding: 24px 16px 48px;
-    max-width: 1100px;
+    max-width: 1160px;
     margin: 0 auto;
   }
   h1 { font-size: 1.5rem; margin: 0 0 4px; }
   .subtitle { color: var(--text-secondary); font-size: 0.95rem; margin: 0 0 4px; }
+
+  .header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+
+  .live-status {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 999px;
+    padding: 6px 8px 6px 14px; font-size: 0.8rem; color: var(--text-secondary); white-space: nowrap;
+  }
+  .live-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .live-dot.on { background: var(--good); }
+  .live-dot.off { background: var(--text-muted); }
+  .live-dot.warn { background: var(--warning); }
+  .live-dot.err { background: var(--critical); }
+  .live-status button {
+    border: 1px solid var(--border); background: transparent; color: var(--text-primary);
+    border-radius: 999px; padding: 4px 12px; font-size: 0.78rem; cursor: pointer;
+  }
+  .live-status button:hover { background: var(--chip-bg); }
+
+  .banner {
+    font-size: 0.85rem; border-radius: 8px; padding: 10px 14px; margin: 14px 0;
+    border: 1px solid var(--border);
+  }
+  .banner.info { color: var(--text-secondary); background: var(--surface-1); }
+  .banner.warn { color: var(--text-primary); background: var(--surface-1); border-color: var(--warning); }
+  .banner.err { color: var(--text-primary); background: var(--surface-1); border-color: var(--critical); }
+  .banner[hidden] { display: none; }
+
   .caveat {
     color: var(--text-secondary);
     font-size: 0.85rem;
@@ -69,9 +115,32 @@
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 10px 14px;
-    margin: 16px 0 28px;
+    margin: 16px 0 20px;
   }
   .caveat b { color: var(--text-primary); }
+
+  /* ---- Filters ---- */
+  .filter-bar {
+    display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start;
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px; margin: 0 0 6px;
+  }
+  .filter-group { display: flex; flex-direction: column; gap: 6px; }
+  .filter-group > label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted); }
+  .filter-bar select, .filter-bar input[type="datetime-local"] {
+    font-family: inherit; font-size: 0.85rem; color: var(--text-primary);
+    background: var(--page); border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px;
+  }
+  .chip-group { display: flex; flex-wrap: wrap; gap: 6px; max-width: 420px; }
+  .chip {
+    font-family: inherit; font-size: 0.78rem; border: 1px solid var(--border); background: var(--chip-bg);
+    color: var(--text-secondary); border-radius: 999px; padding: 4px 12px; cursor: pointer;
+  }
+  .chip[aria-pressed="true"] { background: var(--chip-bg-active); color: var(--chip-text-active); border-color: transparent; }
+  .filter-note { font-size: 0.78rem; color: var(--text-muted); margin: 6px 0 22px; }
+
+  .content-wrap { transition: opacity 0.2s ease; }
+  .content-wrap.stale { opacity: 0.55; }
 
   .stat-row {
     display: flex;
@@ -119,6 +188,7 @@
   }
   .chart-card h3 { font-size: 0.95rem; margin: 0 0 2px; }
   .chart-card .chart-note { font-size: 0.75rem; color: var(--text-muted); margin: 0 0 8px; }
+  .chart-card .empty-note { font-size: 0.8rem; color: var(--text-muted); padding: 30px 0; text-align: center; }
 
   svg.chart { width: 100%; height: auto; display: block; overflow: visible; }
   .gridline { stroke: var(--grid); stroke-width: 1; }
@@ -178,85 +248,344 @@
 </style>
 
 <div class="viz-root">
-  <h1>Cotizaciones Córdoba — Cabify vs Uber</h1>
-  <p class="subtitle">4 rutas de referencia · datos capturados con MacroDroid</p>
-
-  <div class="caveat">
-    <b>Ventana de datos:</b> 27/07/2026 15:49 hs → 28/07/2026 10:08 hs
-    (92 cotizaciones, ~19 horas continuas). Con esto <b>todavía no se pueden
-    comparar días de semana, principio/mediados de mes ni semanas
-    calendario</b> — es una sola franja horaria continua. DiDi no tiene
-    datos aún (falta activarlo en MacroDroid).
-  </div>
-
-  <div class="stat-row" id="stat-row"></div>
-
-  <div class="legend">
-    <span class="legend-item"><span class="legend-swatch" style="background:var(--series-cabify)"></span>Cabify</span>
-    <span class="legend-item"><span class="legend-swatch" style="background:var(--series-uber)"></span>Uber</span>
-  </div>
-
-  <div class="chart-grid" id="chart-grid"></div>
-
-  <h2 class="section">Gap promedio Cabify vs Uber por ruta</h2>
-  <div class="bar-chart-card" id="bar-chart-card">
-    <p class="chart-note" style="color:var(--text-muted);font-size:0.8rem;margin:0 0 10px;">
-      Gap = (Precio Cabify − Precio Uber) / Precio Uber. Negativo (azul) = Cabify más barata que Uber en promedio.
-    </p>
-    <div id="bar-chart"></div>
-  </div>
-
-  <details class="table-view">
-    <summary>Ver datos en tabla</summary>
-    <div class="scroll-wrap">
-      <table class="data-table" id="data-table"></table>
+  <div class="header-row">
+    <div>
+      <h1>Cotizaciones Córdoba — Cabify vs Uber</h1>
+      <p class="subtitle">4 rutas de referencia · datos capturados con MacroDroid</p>
     </div>
-  </details>
+    <div class="live-status" id="live-status">
+      <span class="live-dot off" id="live-dot"></span>
+      <span id="live-label">Cargando…</span>
+      <button id="live-refresh-btn" type="button" hidden>Actualizar ahora</button>
+    </div>
+  </div>
 
-  <footer class="note">Fuente: planilla "Cotizaciones" (Google Sheets), export del 28/07/2026.</footer>
+  <div class="banner err" id="error-banner" hidden></div>
+
+  <div class="caveat" id="caveat-box"></div>
+
+  <div class="filter-bar" id="filter-bar">
+    <div class="filter-group">
+      <label for="f-preset">Rango de fechas</label>
+      <select id="f-preset">
+        <option value="all">Todo</option>
+        <option value="24h">Últimas 24 hs</option>
+        <option value="48h">Últimas 48 hs</option>
+        <option value="7d">Última semana</option>
+        <option value="custom">Personalizado…</option>
+      </select>
+      <span id="f-custom-range" style="display:none; display:flex; gap:6px; align-items:center;">
+        <input type="datetime-local" id="f-from"> <span style="font-size:0.78rem;color:var(--text-muted);">a</span> <input type="datetime-local" id="f-to">
+      </span>
+    </div>
+    <div class="filter-group">
+      <label>Rutas</label>
+      <div id="f-routes" class="chip-group"></div>
+    </div>
+    <div class="filter-group">
+      <label>Rango horario</label>
+      <div style="display:flex; gap:6px; align-items:center;">
+        <select id="f-hour-min"></select>
+        <span style="font-size:0.78rem;color:var(--text-muted);">a</span>
+        <select id="f-hour-max"></select>
+      </div>
+    </div>
+    <div class="filter-group">
+      <label>Día de semana</label>
+      <div id="f-dow" class="chip-group"></div>
+    </div>
+  </div>
+  <p class="filter-note" id="filter-note"></p>
+
+  <div class="content-wrap" id="content-wrap">
+    <div class="stat-row" id="stat-row"></div>
+
+    <div class="legend" id="legend"></div>
+
+    <div class="chart-grid" id="chart-grid"></div>
+
+    <h2 class="section">Gap promedio Cabify vs Uber por ruta</h2>
+    <div class="bar-chart-card" id="bar-chart-card">
+      <p class="chart-note" style="color:var(--text-muted);font-size:0.8rem;margin:0 0 10px;">
+        Gap = (Precio Cabify − Precio Uber) / Precio Uber. Negativo (azul) = Cabify más barata que Uber en promedio.
+      </p>
+      <div id="bar-chart"></div>
+    </div>
+
+    <details class="table-view">
+      <summary>Ver datos en tabla</summary>
+      <div class="scroll-wrap">
+        <table class="data-table" id="data-table"></table>
+      </div>
+    </details>
+  </div>
+
+  <footer class="note" id="source-note"></footer>
   <div class="tooltip" id="tooltip"></div>
 </div>
 
 <script>
-const DATA = [{"t": "2026-07-27T15:49:14", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3800.0, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-27T15:52:14", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3700.0, "uber": 4200.0, "km": 4.0}, {"t": "2026-07-27T15:55:14", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 7600.0, "uber": 6000.0, "km": 7.9}, {"t": "2026-07-27T15:58:14", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4800.0, "uber": 7500.0, "km": 7.5}, {"t": "2026-07-27T16:32:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": null, "uber": 3400.0, "km": 3.9}, {"t": "2026-07-27T16:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3400.0, "uber": 4400.0, "km": 4.0}, {"t": "2026-07-27T16:36:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 7100.0, "uber": 6000.0, "km": 7.9}, {"t": "2026-07-27T16:38:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4800.0, "uber": 7400.0, "km": 7.5}, {"t": "2026-07-27T17:02:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": null, "uber": 3500.0, "km": 3.9}, {"t": "2026-07-27T17:04:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3400.0, "uber": 4400.0, "km": 4.0}, {"t": "2026-07-27T17:06:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": null, "uber": 6400.0, "km": 7.9}, {"t": "2026-07-27T17:08:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4900.0, "uber": 7400.0, "km": 7.5}, {"t": "2026-07-27T17:32:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": null, "uber": 3800.0, "km": 3.9}, {"t": "2026-07-27T17:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 4200.0, "uber": 4400.0, "km": 4.0}, {"t": "2026-07-27T17:36:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 6500.0, "uber": 8100.0, "km": 7.9}, {"t": "2026-07-27T17:38:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5400.0, "uber": 7500.0, "km": 7.5}, {"t": "2026-07-27T18:32:02", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 4100.0, "uber": 3500.0, "km": 3.9}, {"t": "2026-07-27T18:34:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3400.0, "uber": 4500.0, "km": 4.0}, {"t": "2026-07-27T18:36:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 7400.0, "uber": 6400.0, "km": 7.9}, {"t": "2026-07-27T18:38:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4800.0, "uber": 7500.0, "km": 7.5}, {"t": "2026-07-27T19:02:02", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 4100.0, "uber": 3400.0, "km": 3.9}, {"t": "2026-07-27T19:04:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3700.0, "uber": 4400.0, "km": 4.0}, {"t": "2026-07-27T19:06:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 6700.0, "uber": 6600.0, "km": 7.9}, {"t": "2026-07-27T19:08:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5300.0, "uber": 7200.0, "km": 7.5}, {"t": "2026-07-27T19:32:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3300.0, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-27T19:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3400.0, "uber": 4400.0, "km": 4.0}, {"t": "2026-07-27T19:36:02", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": null, "uber": 6500.0, "km": 7.9}, {"t": "2026-07-27T19:38:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4800.0, "uber": 7300.0, "km": 7.5}, {"t": "2026-07-27T20:32:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3200.0, "uber": 3600.0, "km": 3.9}, {"t": "2026-07-27T20:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": null, "uber": 4700.0, "km": 4.0}, {"t": "2026-07-27T20:36:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5500.0, "uber": 7100.0, "km": 7.9}, {"t": "2026-07-27T20:38:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4700.0, "uber": 7700.0, "km": 7.5}, {"t": "2026-07-27T21:02:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3500.0, "uber": 3500.0, "km": 3.9}, {"t": "2026-07-27T21:04:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3600.0, "uber": 4700.0, "km": 4.0}, {"t": "2026-07-27T21:06:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5500.0, "uber": 6900.0, "km": 7.9}, {"t": "2026-07-27T21:08:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": 6900.0, "uber": 7600.0, "km": 7.5}, {"t": "2026-07-27T21:32:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3100.0, "uber": 3500.0, "km": 3.9}, {"t": "2026-07-27T21:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 2900.0, "uber": 4600.0, "km": 4.0}, {"t": "2026-07-27T21:36:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 4500.0, "uber": 6900.0, "km": 7.9}, {"t": "2026-07-27T21:38:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5200.0, "uber": 7400.0, "km": 7.5}, {"t": "2026-07-27T22:02:02", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3800.0, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-27T22:04:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3200.0, "uber": 4600.0, "km": 4.0}, {"t": "2026-07-27T22:06:02", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5400.0, "uber": 7000.0, "km": 7.9}, {"t": "2026-07-27T22:08:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4600.0, "uber": 7400.0, "km": 7.5}, {"t": "2026-07-27T22:32:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3400.0, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-27T22:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 4300.0, "uber": 4600.0, "km": 4.0}, {"t": "2026-07-27T22:36:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5400.0, "uber": 6900.0, "km": 7.9}, {"t": "2026-07-27T22:38:03", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5200.0, "uber": 7400.0, "km": 7.5}, {"t": "2026-07-27T23:02:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3000.0, "uber": 3400.0, "km": 3.9}, {"t": "2026-07-27T23:04:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": null, "uber": null, "km": 4.0}, {"t": "2026-07-27T23:06:02", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 4900.0, "uber": 7300.0, "km": 7.9}, {"t": "2026-07-27T23:08:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4600.0, "uber": 20100.0, "km": 7.5}, {"t": "2026-07-27T23:32:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3000.0, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-27T23:34:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3500.0, "uber": 4600.0, "km": 4.0}, {"t": "2026-07-27T23:36:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 7000.0, "uber": 7200.0, "km": 7.9}, {"t": "2026-07-27T23:38:00", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4600.0, "uber": null, "km": 7.5}, {"t": "2026-07-28T00:02:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3000.0, "uber": 4000.0, "km": 3.9}, {"t": "2026-07-28T00:04:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3100.0, "uber": 5200.0, "km": 4.0}, {"t": "2026-07-28T00:06:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5900.0, "uber": 15100.0, "km": 7.9}, {"t": "2026-07-28T00:08:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5100.0, "uber": 8700.0, "km": 7.5}, {"t": "2026-07-28T00:32:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 7400.0, "uber": 3700.0, "km": 3.9}, {"t": "2026-07-28T00:34:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 7800.0, "uber": 5200.0, "km": 4.0}, {"t": "2026-07-28T00:36:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 6500.0, "uber": 8100.0, "km": 7.9}, {"t": "2026-07-28T00:38:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 10300.0, "uber": 9900.0, "km": 7.5}, {"t": "2026-07-28T01:02:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": null, "uber": 4700.0, "km": 3.9}, {"t": "2026-07-28T01:04:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": null, "uber": 5100.0, "km": 4.0}, {"t": "2026-07-28T01:06:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 11500.0, "uber": 10400.0, "km": 7.9}, {"t": "2026-07-28T01:08:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": 12000.0, "uber": 8100.0, "km": 7.5}, {"t": "2026-07-28T01:32:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3300.0, "uber": 3700.0, "km": 3.9}, {"t": "2026-07-28T01:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3500.0, "uber": 5100.0, "km": 4.0}, {"t": "2026-07-28T01:36:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5900.0, "uber": 7600.0, "km": 7.9}, {"t": "2026-07-28T01:38:00", "ruta": "Rufino Varela -> Santa Fe", "cabify": 11100.0, "uber": 8100.0, "km": 7.5}, {"t": "2026-07-28T02:02:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 4800.0, "uber": 3800.0, "km": 3.9}, {"t": "2026-07-28T02:04:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 4300.0, "uber": 5100.0, "km": 4.0}, {"t": "2026-07-28T02:06:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5200.0, "uber": 7100.0, "km": 7.9}, {"t": "2026-07-28T02:08:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": null, "uber": 8300.0, "km": 7.5}, {"t": "2026-07-28T02:32:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3000.0, "uber": 5600.0, "km": 3.9}, {"t": "2026-07-28T02:34:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3100.0, "uber": 9600.0, "km": 4.0}, {"t": "2026-07-28T02:36:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5300.0, "uber": 7100.0, "km": 7.9}, {"t": "2026-07-28T02:38:03", "ruta": "Rufino Varela -> Santa Fe", "cabify": null, "uber": 8200.0, "km": 7.5}, {"t": "2026-07-28T09:26:36", "ruta": "Crisol 64 -> Plaza Colón", "cabify": null, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-28T09:28:37", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 4400.0, "uber": 3800.0, "km": 4.0}, {"t": "2026-07-28T09:30:37", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 5600.0, "uber": 6300.0, "km": 3.9}, {"t": "2026-07-28T09:32:00", "ruta": "Rufino Varela -> Santa Fe", "cabify": null, "uber": null, "km": 7.5}, {"t": "2026-07-28T09:32:37", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 5300.0, "uber": null, "km": 4.0}, {"t": "2026-07-28T09:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 4100.0, "uber": 3800.0, "km": 4.0}, {"t": "2026-07-28T09:36:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5100.0, "uber": 6300.0, "km": 7.9}, {"t": "2026-07-28T09:38:00", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5300.0, "uber": 7200.0, "km": 7.5}, {"t": "2026-07-28T10:02:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3800.0, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-28T10:04:03", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3700.0, "uber": 3900.0, "km": 4.0}, {"t": "2026-07-28T10:06:04", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 6200.0, "uber": 6400.0, "km": 7.9}, {"t": "2026-07-28T10:08:03", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5300.0, "uber": 7000.0, "km": 7.5}];
+// ============================================================
+// Embedded snapshot (fallback when this page isn't opened as a
+// live Claude artifact with the Google Drive connector granted).
+// ============================================================
+const SNAPSHOT_DATA = [{"t": "2026-07-27T15:49:14", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3800.0, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-27T15:52:14", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3700.0, "uber": 4200.0, "km": 4.0}, {"t": "2026-07-27T15:55:14", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 7600.0, "uber": 6000.0, "km": 7.9}, {"t": "2026-07-27T15:58:14", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4800.0, "uber": 7500.0, "km": 7.5}, {"t": "2026-07-27T16:32:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": null, "uber": 3400.0, "km": 3.9}, {"t": "2026-07-27T16:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3400.0, "uber": 4400.0, "km": 4.0}, {"t": "2026-07-27T16:36:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 7100.0, "uber": 6000.0, "km": 7.9}, {"t": "2026-07-27T16:38:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4800.0, "uber": 7400.0, "km": 7.5}, {"t": "2026-07-27T17:02:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": null, "uber": 3500.0, "km": 3.9}, {"t": "2026-07-27T17:04:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3400.0, "uber": 4400.0, "km": 4.0}, {"t": "2026-07-27T17:06:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": null, "uber": 6400.0, "km": 7.9}, {"t": "2026-07-27T17:08:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4900.0, "uber": 7400.0, "km": 7.5}, {"t": "2026-07-27T17:32:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": null, "uber": 3800.0, "km": 3.9}, {"t": "2026-07-27T17:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 4200.0, "uber": 4400.0, "km": 4.0}, {"t": "2026-07-27T17:36:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 6500.0, "uber": 8100.0, "km": 7.9}, {"t": "2026-07-27T17:38:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5400.0, "uber": 7500.0, "km": 7.5}, {"t": "2026-07-27T18:32:02", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 4100.0, "uber": 3500.0, "km": 3.9}, {"t": "2026-07-27T18:34:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3400.0, "uber": 4500.0, "km": 4.0}, {"t": "2026-07-27T18:36:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 7400.0, "uber": 6400.0, "km": 7.9}, {"t": "2026-07-27T18:38:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4800.0, "uber": 7500.0, "km": 7.5}, {"t": "2026-07-27T19:02:02", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 4100.0, "uber": 3400.0, "km": 3.9}, {"t": "2026-07-27T19:04:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3700.0, "uber": 4400.0, "km": 4.0}, {"t": "2026-07-27T19:06:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 6700.0, "uber": 6600.0, "km": 7.9}, {"t": "2026-07-27T19:08:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5300.0, "uber": 7200.0, "km": 7.5}, {"t": "2026-07-27T19:32:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3300.0, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-27T19:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3400.0, "uber": 4400.0, "km": 4.0}, {"t": "2026-07-27T19:36:02", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": null, "uber": 6500.0, "km": 7.9}, {"t": "2026-07-27T19:38:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4800.0, "uber": 7300.0, "km": 7.5}, {"t": "2026-07-27T20:32:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3200.0, "uber": 3600.0, "km": 3.9}, {"t": "2026-07-27T20:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": null, "uber": 4700.0, "km": 4.0}, {"t": "2026-07-27T20:36:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5500.0, "uber": 7100.0, "km": 7.9}, {"t": "2026-07-27T20:38:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4700.0, "uber": 7700.0, "km": 7.5}, {"t": "2026-07-27T21:02:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3500.0, "uber": 3500.0, "km": 3.9}, {"t": "2026-07-27T21:04:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3600.0, "uber": 4700.0, "km": 4.0}, {"t": "2026-07-27T21:06:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5500.0, "uber": 6900.0, "km": 7.9}, {"t": "2026-07-27T21:08:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": 6900.0, "uber": 7600.0, "km": 7.5}, {"t": "2026-07-27T21:32:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3100.0, "uber": 3500.0, "km": 3.9}, {"t": "2026-07-27T21:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 2900.0, "uber": 4600.0, "km": 4.0}, {"t": "2026-07-27T21:36:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 4500.0, "uber": 6900.0, "km": 7.9}, {"t": "2026-07-27T21:38:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5200.0, "uber": 7400.0, "km": 7.5}, {"t": "2026-07-27T22:02:02", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3800.0, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-27T22:04:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3200.0, "uber": 4600.0, "km": 4.0}, {"t": "2026-07-27T22:06:02", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5400.0, "uber": 7000.0, "km": 7.9}, {"t": "2026-07-27T22:08:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4600.0, "uber": 7400.0, "km": 7.5}, {"t": "2026-07-27T22:32:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3400.0, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-27T22:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 4300.0, "uber": 4600.0, "km": 4.0}, {"t": "2026-07-27T22:36:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5400.0, "uber": 6900.0, "km": 7.9}, {"t": "2026-07-27T22:38:03", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5200.0, "uber": 7400.0, "km": 7.5}, {"t": "2026-07-27T23:02:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3000.0, "uber": 3400.0, "km": 3.9}, {"t": "2026-07-27T23:04:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": null, "uber": null, "km": 4.0}, {"t": "2026-07-27T23:06:02", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 4900.0, "uber": 7300.0, "km": 7.9}, {"t": "2026-07-27T23:08:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4600.0, "uber": 20100.0, "km": 7.5}, {"t": "2026-07-27T23:32:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3000.0, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-27T23:34:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3500.0, "uber": 4600.0, "km": 4.0}, {"t": "2026-07-27T23:36:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 7000.0, "uber": 7200.0, "km": 7.9}, {"t": "2026-07-27T23:38:00", "ruta": "Rufino Varela -> Santa Fe", "cabify": 4600.0, "uber": null, "km": 7.5}, {"t": "2026-07-28T00:02:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3000.0, "uber": 4000.0, "km": 3.9}, {"t": "2026-07-28T00:04:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3100.0, "uber": 5200.0, "km": 4.0}, {"t": "2026-07-28T00:06:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5900.0, "uber": 15100.0, "km": 7.9}, {"t": "2026-07-28T00:08:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5100.0, "uber": 8700.0, "km": 7.5}, {"t": "2026-07-28T00:32:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 7400.0, "uber": 3700.0, "km": 3.9}, {"t": "2026-07-28T00:34:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 7800.0, "uber": 5200.0, "km": 4.0}, {"t": "2026-07-28T00:36:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 6500.0, "uber": 8100.0, "km": 7.9}, {"t": "2026-07-28T00:38:01", "ruta": "Rufino Varela -> Santa Fe", "cabify": 10300.0, "uber": 9900.0, "km": 7.5}, {"t": "2026-07-28T01:02:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": null, "uber": 4700.0, "km": 3.9}, {"t": "2026-07-28T01:04:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": null, "uber": 5100.0, "km": 4.0}, {"t": "2026-07-28T01:06:01", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 11500.0, "uber": 10400.0, "km": 7.9}, {"t": "2026-07-28T01:08:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": 12000.0, "uber": 8100.0, "km": 7.5}, {"t": "2026-07-28T01:32:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3300.0, "uber": 3700.0, "km": 3.9}, {"t": "2026-07-28T01:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3500.0, "uber": 5100.0, "km": 4.0}, {"t": "2026-07-28T01:36:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5900.0, "uber": 7600.0, "km": 7.9}, {"t": "2026-07-28T01:38:00", "ruta": "Rufino Varela -> Santa Fe", "cabify": 11100.0, "uber": 8100.0, "km": 7.5}, {"t": "2026-07-28T02:02:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 4800.0, "uber": 3800.0, "km": 3.9}, {"t": "2026-07-28T02:04:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 4300.0, "uber": 5100.0, "km": 4.0}, {"t": "2026-07-28T02:06:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5200.0, "uber": 7100.0, "km": 7.9}, {"t": "2026-07-28T02:08:02", "ruta": "Rufino Varela -> Santa Fe", "cabify": null, "uber": 8300.0, "km": 7.5}, {"t": "2026-07-28T02:32:00", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3000.0, "uber": 5600.0, "km": 3.9}, {"t": "2026-07-28T02:34:00", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3100.0, "uber": 9600.0, "km": 4.0}, {"t": "2026-07-28T02:36:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5300.0, "uber": 7100.0, "km": 7.9}, {"t": "2026-07-28T02:38:03", "ruta": "Rufino Varela -> Santa Fe", "cabify": null, "uber": 8200.0, "km": 7.5}, {"t": "2026-07-28T09:26:36", "ruta": "Crisol 64 -> Plaza Colón", "cabify": null, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-28T09:28:37", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 4400.0, "uber": 3800.0, "km": 4.0}, {"t": "2026-07-28T09:30:37", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 5600.0, "uber": 6300.0, "km": 3.9}, {"t": "2026-07-28T09:32:00", "ruta": "Rufino Varela -> Santa Fe", "cabify": null, "uber": null, "km": 7.5}, {"t": "2026-07-28T09:32:37", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 5300.0, "uber": null, "km": 4.0}, {"t": "2026-07-28T09:34:01", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 4100.0, "uber": 3800.0, "km": 4.0}, {"t": "2026-07-28T09:36:00", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 5100.0, "uber": 6300.0, "km": 7.9}, {"t": "2026-07-28T09:38:00", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5300.0, "uber": 7200.0, "km": 7.5}, {"t": "2026-07-28T10:02:01", "ruta": "Crisol 64 -> Plaza Colón", "cabify": 3800.0, "uber": 3300.0, "km": 3.9}, {"t": "2026-07-28T10:04:03", "ruta": "Lascano Colodrero -> Ilolay", "cabify": 3700.0, "uber": 3900.0, "km": 4.0}, {"t": "2026-07-28T10:06:04", "ruta": "Obispo Salguero -> Octavio Pinto", "cabify": 6200.0, "uber": 6400.0, "km": 7.9}, {"t": "2026-07-28T10:08:03", "ruta": "Rufino Varela -> Santa Fe", "cabify": 5300.0, "uber": 7000.0, "km": 7.5}];
 
-const ROUTE_ORDER = [
-  "Crisol 64 -> Plaza Colón",
-  "Lascano Colodrero -> Ilolay",
-  "Obispo Salguero -> Octavio Pinto",
-  "Rufino Varela -> Santa Fe",
-];
+const SHEET_ID = "1SLtiQSFMCUntwpxdMmR6RSDsgNADXc4-Gu9_aSc15oo";
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/1SLtiQSFMCUntwpxdMmR6RSDsgNADXc4-Gu9_aSc15oo/edit?gid=0#gid=0";
+
 const ROUTE_META = {
   "Crisol 64 -> Plaza Colón": {short: "Crisol → Plaza Colón", tag: "corta · mucha demanda"},
   "Lascano Colodrero -> Ilolay": {short: "Lascano Colodrero → Ilolay", tag: "corta · poca demanda"},
   "Obispo Salguero -> Octavio Pinto": {short: "Obispo Salguero → Octavio Pinto", tag: "larga · mucha demanda"},
   "Rufino Varela -> Santa Fe": {short: "Rufino Varela → Santa Fe", tag: "larga · poca demanda"},
 };
+const KNOWN_ROUTE_ORDER = Object.keys(ROUTE_META);
+const ROUTE_TUPLES = {
+  "Crisol 64|Plaza Colón": "Crisol 64 -> Plaza Colón",
+  "Javier Lascano Colodrero 2924|Ilolay 3000": "Lascano Colodrero -> Ilolay",
+  "Obispo Salguero 777|Av. Octavio Pinto 2541": "Obispo Salguero -> Octavio Pinto",
+  "Av. Rufino Varela Ortiz 5147|Santa Fe 330": "Rufino Varela -> Santa Fe",
+};
+const DOW_LABELS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
-const isDark = () => {
-  const t = document.documentElement.getAttribute('data-theme');
-  if (t === 'dark') return true;
-  if (t === 'light') return false;
-  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+function routeMeta(key) {
+  return ROUTE_META[key] || {short: key, tag: ""};
+}
+
+// ============================================================
+// State
+// ============================================================
+let RAW = SNAPSHOT_DATA.map(d => ({t: new Date(d.t), ruta: d.ruta, cabify: d.cabify, uber: d.uber, didi: (d.didi ?? null)}));
+let dataMode = "static"; // static | live | stale | error | refreshing
+let lastUpdated = null;
+
+let filters = {
+  preset: "all",
+  customFrom: null,
+  customTo: null,
+  routesMode: "all", // "all" | Set of route keys
+  hourMin: 0,
+  hourMax: 23,
+  dow: new Set([0,1,2,3,4,5,6]),
 };
 
+// ============================================================
+// Helpers
+// ============================================================
 function cssVar(name) {
   return getComputedStyle(document.querySelector('.viz-root')).getPropertyValue(name).trim();
 }
 
-// ---------- Stat tiles ----------
-function renderStats() {
-  const total = DATA.length;
-  const cabifyOk = DATA.filter(d => d.cabify !== null).length;
-  const uberOk = DATA.filter(d => d.uber !== null).length;
+function fmtMoney(v) {
+  return v === null || v === undefined ? "s/d" : "$" + Math.round(v).toLocaleString('es-AR');
+}
+
+function relTime(ms) {
+  if (ms === null) return "";
+  const diff = Date.now() - ms;
+  if (diff < 45000) return "hace instantes";
+  const m = Math.round(diff / 60000);
+  if (m < 60) return `hace ${m} min`;
+  const h = Math.round(m / 60);
+  if (h < 48) return `hace ${h} h`;
+  return `hace ${Math.round(h/24)} d`;
+}
+
+function getAllRoutes() {
+  const seen = new Map();
+  RAW.forEach(d => { if (!seen.has(d.ruta)) seen.set(d.ruta, true); });
+  const known = KNOWN_ROUTE_ORDER.filter(k => seen.has(k));
+  const unknown = [...seen.keys()].filter(k => !KNOWN_ROUTE_ORDER.includes(k)).sort();
+  return known.concat(unknown);
+}
+
+// ============================================================
+// CSV parsing (RFC4180-ish: quoted fields, embedded commas, "" escaping)
+// ============================================================
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = "", inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i+1] === '"') { field += '"'; i++; }
+        else { inQuotes = false; }
+      } else { field += c; }
+    } else {
+      if (c === '"') inQuotes = true;
+      else if (c === ',') { row.push(field); field = ""; }
+      else if (c === '\r') { /* skip */ }
+      else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ""; }
+      else field += c;
+    }
+  }
+  if (field.length || row.length) { row.push(field); rows.push(row); }
+  return rows.filter(r => r.length > 1 || (r.length === 1 && r[0] !== ""));
+}
+
+function parseNum(s) {
+  if (s === undefined || s === null || s.trim() === "") return null;
+  const n = parseFloat(s.replace(",", "."));
+  return isNaN(n) ? null : n;
+}
+
+function parseFecha(s) {
+  // dd/mm/yyyy HH:MM:SS
+  const m = s.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2}):(\d{2})/);
+  if (!m) return null;
+  const [, d, mo, y, h, mi, se] = m;
+  return new Date(+y, +mo - 1, +d, +h, +mi, +se);
+}
+
+function csvToRecords(text) {
+  const rows = parseCSV(text);
+  if (!rows.length) return [];
+  const header = rows[0].map(h => h.trim());
+  const idx = {};
+  header.forEach((h, i) => idx[h] = i);
+  const out = [];
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    const fecha = parseFecha(r[idx["Fecha"]] || "");
+    if (!fecha) continue;
+    const origen = (r[idx["Origen"]] || "").trim();
+    const destino = (r[idx["Destino"]] || "").trim();
+    const rutaKey = ROUTE_TUPLES[origen + "|" + destino] || `${origen} -> ${destino}`;
+    out.push({
+      t: fecha,
+      ruta: rutaKey,
+      cabify: parseNum(r[idx["Precio Cabify"]]),
+      uber: parseNum(r[idx["Precio Uber"]]),
+      didi: parseNum(r[idx["Precio DiDi"]]),
+    });
+  }
+  return out;
+}
+
+// ============================================================
+// Filtering
+// ============================================================
+function inHourRange(hour, min, max) {
+  if (min <= max) return hour >= min && hour <= max;
+  return hour >= min || hour <= max; // wraps past midnight
+}
+
+function getFiltered() {
+  let from = null, to = null;
+  const maxT = RAW.length ? Math.max(...RAW.map(d => d.t.getTime())) : Date.now();
+  if (filters.preset === "24h") from = maxT - 24*3600*1000;
+  else if (filters.preset === "48h") from = maxT - 48*3600*1000;
+  else if (filters.preset === "7d") from = maxT - 7*24*3600*1000;
+  else if (filters.preset === "custom") {
+    from = filters.customFrom ? new Date(filters.customFrom).getTime() : null;
+    to = filters.customTo ? new Date(filters.customTo).getTime() : null;
+  }
+
+  return RAW.filter(d => {
+    const tt = d.t.getTime();
+    if (from !== null && tt < from) return false;
+    if (to !== null && tt > to) return false;
+    if (filters.routesMode !== "all" && !filters.routesMode.has(d.ruta)) return false;
+    if (!inHourRange(d.t.getHours(), filters.hourMin, filters.hourMax)) return false;
+    if (!filters.dow.has(d.t.getDay())) return false;
+    return true;
+  });
+}
+
+// ============================================================
+// Filter bar UI
+// ============================================================
+function buildFilterBar() {
+  const presetSel = document.getElementById('f-preset');
+  presetSel.value = filters.preset;
+  presetSel.addEventListener('change', () => {
+    filters.preset = presetSel.value;
+    document.getElementById('f-custom-range').style.display = filters.preset === "custom" ? "flex" : "none";
+    renderAll();
+  });
+
+  const fromInput = document.getElementById('f-from');
+  const toInput = document.getElementById('f-to');
+  fromInput.addEventListener('change', () => { filters.customFrom = fromInput.value || null; renderAll(); });
+  toInput.addEventListener('change', () => { filters.customTo = toInput.value || null; renderAll(); });
+
+  const hourMinSel = document.getElementById('f-hour-min');
+  const hourMaxSel = document.getElementById('f-hour-max');
+  for (let h = 0; h < 24; h++) {
+    const o1 = document.createElement('option'); o1.value = h; o1.textContent = String(h).padStart(2,'0') + ":00";
+    hourMinSel.appendChild(o1);
+    const o2 = document.createElement('option'); o2.value = h; o2.textContent = String(h).padStart(2,'0') + ":00";
+    hourMaxSel.appendChild(o2);
+  }
+  hourMinSel.value = filters.hourMin;
+  hourMaxSel.value = filters.hourMax;
+  hourMinSel.addEventListener('change', () => { filters.hourMin = +hourMinSel.value; renderAll(); });
+  hourMaxSel.addEventListener('change', () => { filters.hourMax = +hourMaxSel.value; renderAll(); });
+
+  const dowContainer = document.getElementById('f-dow');
+  dowContainer.innerHTML = "";
+  DOW_LABELS.forEach((label, i) => {
+    const btn = document.createElement('button');
+    btn.type = "button"; btn.className = "chip"; btn.textContent = label;
+    btn.setAttribute('aria-pressed', filters.dow.has(i) ? 'true' : 'false');
+    btn.addEventListener('click', () => {
+      if (filters.dow.has(i)) filters.dow.delete(i); else filters.dow.add(i);
+      btn.setAttribute('aria-pressed', filters.dow.has(i) ? 'true' : 'false');
+      renderAll();
+    });
+    dowContainer.appendChild(btn);
+  });
+}
+
+function buildRouteChips() {
+  const container = document.getElementById('f-routes');
+  container.innerHTML = "";
+  const routes = getAllRoutes();
+  const activeSet = filters.routesMode === "all" ? new Set(routes) : filters.routesMode;
+  routes.forEach(key => {
+    const btn = document.createElement('button');
+    btn.type = "button"; btn.className = "chip"; btn.textContent = routeMeta(key).short;
+    btn.setAttribute('aria-pressed', activeSet.has(key) ? 'true' : 'false');
+    btn.addEventListener('click', () => {
+      const current = filters.routesMode === "all" ? new Set(routes) : new Set(filters.routesMode);
+      if (current.has(key)) current.delete(key); else current.add(key);
+      filters.routesMode = current.size === routes.length ? "all" : current;
+      buildRouteChips();
+      renderAll();
+    });
+    container.appendChild(btn);
+  });
+}
+
+function updateFilterNote() {
+  const days = new Set(RAW.map(d => d.t.toDateString())).size;
+  const note = document.getElementById('filter-note');
+  if (days <= 2) {
+    note.textContent = "Con menos de 2-3 días de datos acumulados, los filtros de rango de fechas y día de semana todavía no muestran diferencias reales — quedan listos para cuando haya más historia.";
+  } else {
+    note.textContent = "";
+  }
+}
+
+// ============================================================
+// Stat tiles
+// ============================================================
+function renderStats(data) {
+  const total = data.length;
+  const cabifyOk = data.filter(d => d.cabify !== null).length;
+  const uberOk = data.filter(d => d.uber !== null).length;
+  const didiOk = data.filter(d => d.didi !== null).length;
   const tiles = [
-    {label: "Cotizaciones totales", value: total.toLocaleString('es-AR')},
-    {label: "Rutas cubiertas", value: ROUTE_ORDER.length},
-    {label: "Disponibilidad Cabify", value: Math.round(cabifyOk/total*100) + "%"},
-    {label: "Disponibilidad Uber", value: Math.round(uberOk/total*100) + "%"},
-    {label: "Disponibilidad DiDi", value: "0%"},
+    {label: "Cotizaciones (filtro actual)", value: total.toLocaleString('es-AR')},
+    {label: "Rutas visibles", value: new Set(data.map(d => d.ruta)).size},
+    {label: "Disponibilidad Cabify", value: total ? Math.round(cabifyOk/total*100) + "%" : "—"},
+    {label: "Disponibilidad Uber", value: total ? Math.round(uberOk/total*100) + "%" : "—"},
+    {label: "Disponibilidad DiDi", value: total ? Math.round(didiOk/total*100) + "%" : "—"},
   ];
   const row = document.getElementById('stat-row');
+  row.innerHTML = "";
   tiles.forEach(t => {
     const el = document.createElement('div');
     el.className = 'stat-tile';
@@ -267,28 +596,55 @@ function renderStats() {
   });
 }
 
-// ---------- Line charts (small multiples) ----------
-const W = 480, H = 220, PAD = {top: 10, right: 44, bottom: 22, left: 44};
+function renderLegend(data) {
+  const legend = document.getElementById('legend');
+  legend.innerHTML = "";
+  const series = [["Cabify", "var(--series-cabify)"], ["Uber", "var(--series-uber)"]];
+  if (data.some(d => d.didi !== null)) series.push(["DiDi", "var(--series-didi)"]);
+  series.forEach(([name, colorVar]) => {
+    const item = document.createElement('span'); item.className = 'legend-item';
+    const sw = document.createElement('span'); sw.className = 'legend-swatch'; sw.style.background = colorVar;
+    item.appendChild(sw); item.appendChild(document.createTextNode(name));
+    legend.appendChild(item);
+  });
+}
 
-function buildLineChart(routeKey) {
-  const pts = DATA.filter(d => d.ruta === routeKey)
-    .map(d => ({t: new Date(d.t), cabify: d.cabify, uber: d.uber}))
-    .sort((a,b) => a.t - b.t);
+// ============================================================
+// Line charts (small multiples)
+// ============================================================
+const CW = 480, CH = 220, PAD = {top: 10, right: 44, bottom: 22, left: 44};
+const SERIES_DEFS = [
+  {key: "cabify", name: "Cabify", colorVar: "var(--series-cabify)"},
+  {key: "uber", name: "Uber", colorVar: "var(--series-uber)"},
+  {key: "didi", name: "DiDi", colorVar: "var(--series-didi)"},
+];
 
+function buildLineChart(routeKey, data) {
+  const pts = data.filter(d => d.ruta === routeKey).slice().sort((a,b) => a.t - b.t);
+  const container = document.createElement('div');
+  if (!pts.length) {
+    const empty = document.createElement('p');
+    empty.className = 'empty-note';
+    empty.textContent = 'Sin datos con los filtros actuales.';
+    container.appendChild(empty);
+    return container;
+  }
+
+  const activeSeries = SERIES_DEFS.filter(s => pts.some(p => p[s.key] !== null));
   const tMin = pts[0].t.getTime(), tMax = pts[pts.length-1].t.getTime();
   const vals = [];
-  pts.forEach(p => { if (p.cabify!==null) vals.push(p.cabify); if (p.uber!==null) vals.push(p.uber); });
-  const vMin = 0, vMax = Math.max(...vals) * 1.08;
+  pts.forEach(p => activeSeries.forEach(s => { if (p[s.key] !== null) vals.push(p[s.key]); }));
+  const vMin = 0, vMax = (vals.length ? Math.max(...vals) : 1) * 1.08;
+  const tSpan = Math.max(tMax - tMin, 1);
 
-  const x = t => PAD.left + (t - tMin) / (tMax - tMin) * (W - PAD.left - PAD.right);
-  const y = v => H - PAD.bottom - (v - vMin) / (vMax - vMin) * (H - PAD.top - PAD.bottom);
+  const x = t => PAD.left + (t - tMin) / tSpan * (CW - PAD.left - PAD.right);
+  const y = v => CH - PAD.bottom - (v - vMin) / (vMax - vMin || 1) * (CH - PAD.top - PAD.bottom);
 
-  function pathFor(key, color) {
+  function pathFor(key) {
     let d = "", drawing = false;
     pts.forEach(p => {
       if (p[key] === null) { drawing = false; return; }
-      const cmd = drawing ? "L" : "M";
-      d += `${cmd}${x(p.t.getTime()).toFixed(1)},${y(p[key]).toFixed(1)} `;
+      d += `${drawing ? "L" : "M"}${x(p.t.getTime()).toFixed(1)},${y(p[key]).toFixed(1)} `;
       drawing = true;
     });
     return d.trim();
@@ -297,16 +653,15 @@ function buildLineChart(routeKey) {
   const gridVals = [0, vMax*0.5, vMax].map(v => Math.round(v/100)*100);
   const svgNS = "http://www.w3.org/2000/svg";
   const svg = document.createElementNS(svgNS, "svg");
-  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("viewBox", `0 0 ${CW} ${CH}`);
   svg.setAttribute("class", "chart");
   svg.setAttribute("role", "img");
 
-  // gridlines + y ticks
   gridVals.forEach(v => {
     const gy = y(v);
     const line = document.createElementNS(svgNS, "line");
     line.setAttribute("class", "gridline");
-    line.setAttribute("x1", PAD.left); line.setAttribute("x2", W - PAD.right);
+    line.setAttribute("x1", PAD.left); line.setAttribute("x2", CW - PAD.right);
     line.setAttribute("y1", gy); line.setAttribute("y2", gy);
     svg.appendChild(line);
     const text = document.createElementNS(svgNS, "text");
@@ -317,35 +672,31 @@ function buildLineChart(routeKey) {
     svg.appendChild(text);
   });
 
-  // x ticks: first, middle, last timestamp
   [pts[0], pts[Math.floor(pts.length/2)], pts[pts.length-1]].forEach(p => {
     const tx = x(p.t.getTime());
     const text = document.createElementNS(svgNS, "text");
     text.setAttribute("class", "axis-text");
-    text.setAttribute("x", tx); text.setAttribute("y", H - 4);
+    text.setAttribute("x", tx); text.setAttribute("y", CH - 4);
     text.setAttribute("text-anchor", "middle");
     text.textContent = p.t.toLocaleString('es-AR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
     svg.appendChild(text);
   });
 
-  // lines
-  [["cabify", "var(--series-cabify)"], ["uber", "var(--series-uber)"]].forEach(([key, colorVar]) => {
+  activeSeries.forEach(s => {
     const path = document.createElementNS(svgNS, "path");
-    path.setAttribute("d", pathFor(key));
+    path.setAttribute("d", pathFor(s.key));
     path.setAttribute("fill", "none");
-    path.setAttribute("stroke", colorVar);
+    path.setAttribute("stroke", s.colorVar);
     path.setAttribute("stroke-width", "2");
     path.setAttribute("stroke-linecap", "round");
     path.setAttribute("stroke-linejoin", "round");
     svg.appendChild(path);
 
-    // end label
     for (let i = pts.length - 1; i >= 0; i--) {
-      if (pts[i][key] !== null) {
-        const ex = x(pts[i].t.getTime()), ey = y(pts[i][key]);
+      if (pts[i][s.key] !== null) {
         const dot = document.createElementNS(svgNS, "circle");
-        dot.setAttribute("cx", ex); dot.setAttribute("cy", ey); dot.setAttribute("r", 4);
-        dot.setAttribute("fill", colorVar);
+        dot.setAttribute("cx", x(pts[i].t.getTime())); dot.setAttribute("cy", y(pts[i][s.key])); dot.setAttribute("r", 4);
+        dot.setAttribute("fill", s.colorVar);
         dot.setAttribute("stroke", cssVar('--surface-1'));
         dot.setAttribute("stroke-width", 2);
         svg.appendChild(dot);
@@ -354,24 +705,23 @@ function buildLineChart(routeKey) {
     }
   });
 
-  // crosshair + hit rect + tooltip
   const crosshair = document.createElementNS(svgNS, "line");
   crosshair.setAttribute("class", "crosshair");
-  crosshair.setAttribute("y1", PAD.top); crosshair.setAttribute("y2", H - PAD.bottom);
+  crosshair.setAttribute("y1", PAD.top); crosshair.setAttribute("y2", CH - PAD.bottom);
   crosshair.setAttribute("visibility", "hidden");
   svg.appendChild(crosshair);
 
   const hit = document.createElementNS(svgNS, "rect");
   hit.setAttribute("class", "hit-rect");
   hit.setAttribute("x", PAD.left); hit.setAttribute("y", PAD.top);
-  hit.setAttribute("width", W - PAD.left - PAD.right);
-  hit.setAttribute("height", H - PAD.top - PAD.bottom);
+  hit.setAttribute("width", CW - PAD.left - PAD.right);
+  hit.setAttribute("height", CH - PAD.top - PAD.bottom);
   svg.appendChild(hit);
 
   const tooltip = document.getElementById('tooltip');
 
   function nearestPoint(mx) {
-    const targetT = tMin + (mx - PAD.left) / (W - PAD.left - PAD.right) * (tMax - tMin);
+    const targetT = tMin + (mx - PAD.left) / (CW - PAD.left - PAD.right) * tSpan;
     let best = pts[0], bestDist = Infinity;
     pts.forEach(p => {
       const d = Math.abs(p.t.getTime() - targetT);
@@ -382,7 +732,7 @@ function buildLineChart(routeKey) {
 
   hit.addEventListener('pointermove', (ev) => {
     const rect = svg.getBoundingClientRect();
-    const mx = (ev.clientX - rect.left) / rect.width * W;
+    const mx = (ev.clientX - rect.left) / rect.width * CW;
     const p = nearestPoint(mx);
     const px = x(p.t.getTime());
     crosshair.setAttribute("x1", px); crosshair.setAttribute("x2", px);
@@ -396,18 +746,11 @@ function buildLineChart(routeKey) {
     timeEl.className = 't-time';
     timeEl.textContent = p.t.toLocaleString('es-AR', {weekday:'short', day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
     tooltip.appendChild(timeEl);
-    [["Cabify", p.cabify, "var(--series-cabify)"], ["Uber", p.uber, "var(--series-uber)"]].forEach(([name, val, colorVar]) => {
-      const row = document.createElement('div');
-      row.className = 't-row';
-      const key = document.createElement('span');
-      key.className = 't-key';
-      key.style.background = colorVar;
-      const valEl = document.createElement('span');
-      valEl.className = 't-val';
-      valEl.textContent = val === null ? 's/d' : '$' + val.toLocaleString('es-AR');
-      const nameEl = document.createElement('span');
-      nameEl.className = 't-name';
-      nameEl.textContent = name;
+    activeSeries.forEach(s => {
+      const row = document.createElement('div'); row.className = 't-row';
+      const key = document.createElement('span'); key.className = 't-key'; key.style.background = s.colorVar;
+      const valEl = document.createElement('span'); valEl.className = 't-val'; valEl.textContent = fmtMoney(p[s.key]);
+      const nameEl = document.createElement('span'); nameEl.className = 't-name'; nameEl.textContent = s.name;
       row.appendChild(key); row.appendChild(valEl); row.appendChild(nameEl);
       tooltip.appendChild(row);
     });
@@ -417,36 +760,51 @@ function buildLineChart(routeKey) {
     crosshair.setAttribute("visibility", "hidden");
   });
 
-  return svg;
+  container.appendChild(svg);
+  return container;
 }
 
-function renderCharts() {
+function renderCharts(data) {
   const grid = document.getElementById('chart-grid');
-  ROUTE_ORDER.forEach(routeKey => {
+  grid.innerHTML = "";
+  const routes = filters.routesMode === "all" ? getAllRoutes() : getAllRoutes().filter(r => filters.routesMode.has(r));
+  routes.forEach(routeKey => {
     const card = document.createElement('div');
     card.className = 'chart-card';
-    const meta = ROUTE_META[routeKey];
+    const meta = routeMeta(routeKey);
     const h3 = document.createElement('h3'); h3.textContent = meta.short;
     const note = document.createElement('p'); note.className = 'chart-note'; note.textContent = meta.tag;
     card.appendChild(h3); card.appendChild(note);
-    card.appendChild(buildLineChart(routeKey));
+    card.appendChild(buildLineChart(routeKey, data));
     grid.appendChild(card);
   });
 }
 
-// ---------- Diverging bar chart: gap % by route ----------
-function computeGaps() {
-  return ROUTE_ORDER.map(routeKey => {
-    const rows = DATA.filter(d => d.ruta === routeKey && d.cabify !== null && d.uber !== null);
+// ============================================================
+// Diverging bar chart: gap % by route
+// ============================================================
+function computeGaps(data) {
+  const routes = filters.routesMode === "all" ? getAllRoutes() : getAllRoutes().filter(r => filters.routesMode.has(r));
+  return routes.map(routeKey => {
+    const rows = data.filter(d => d.ruta === routeKey && d.cabify !== null && d.uber !== null);
     const gaps = rows.map(r => (r.cabify - r.uber) / r.uber * 100);
-    const mean = gaps.reduce((a,b) => a+b, 0) / gaps.length;
+    const mean = gaps.length ? gaps.reduce((a,b) => a+b, 0) / gaps.length : null;
     return {routeKey, mean, n: gaps.length};
-  });
+  }).filter(g => g.mean !== null);
 }
 
-function renderBarChart() {
-  const gaps = computeGaps();
-  const maxAbs = Math.max(...gaps.map(g => Math.abs(g.mean))) * 1.25;
+function renderBarChart(data) {
+  const container = document.getElementById('bar-chart');
+  container.innerHTML = "";
+  const gaps = computeGaps(data);
+  if (!gaps.length) {
+    const empty = document.createElement('p');
+    empty.className = 'empty-note';
+    empty.textContent = 'Sin datos suficientes con los filtros actuales.';
+    container.appendChild(empty);
+    return;
+  }
+  const maxAbs = Math.max(...gaps.map(g => Math.abs(g.mean))) * 1.25 || 1;
   const W = 900, rowH = 56, PADL = 230, PADR = 70, H = rowH * gaps.length + 20;
   const midX = PADL + (W - PADL - PADR) / 2;
   const scale = v => (W - PADL - PADR) / 2 / maxAbs * v;
@@ -456,7 +814,6 @@ function renderBarChart() {
   svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
   svg.setAttribute("class", "chart");
 
-  // zero line
   const zero = document.createElementNS(svgNS, "line");
   zero.setAttribute("x1", midX); zero.setAttribute("x2", midX);
   zero.setAttribute("y1", 4); zero.setAttribute("y2", H - 4);
@@ -476,14 +833,14 @@ function renderBarChart() {
     label.setAttribute("class", "axis-text");
     label.setAttribute("fill", cssVar('--text-primary'));
     label.setAttribute("font-size", "12");
-    label.textContent = ROUTE_META[g.routeKey].short;
+    label.textContent = routeMeta(g.routeKey).short;
     svg.appendChild(label);
 
     const tag = document.createElementNS(svgNS, "text");
     tag.setAttribute("x", PADL - 12); tag.setAttribute("y", cy + 10);
     tag.setAttribute("text-anchor", "end");
     tag.setAttribute("class", "axis-text");
-    tag.textContent = ROUTE_META[g.routeKey].tag;
+    tag.textContent = routeMeta(g.routeKey).tag;
     svg.appendChild(tag);
 
     const bar = document.createElementNS(svgNS, "rect");
@@ -497,54 +854,272 @@ function renderBarChart() {
     val.setAttribute("class", "end-label");
     val.setAttribute("y", cy + 4);
     val.setAttribute("fill", cssVar('--text-primary'));
-    if (g.mean < 0) {
-      val.setAttribute("x", barX - 8);
-      val.setAttribute("text-anchor", "end");
-    } else {
-      val.setAttribute("x", barX + barW + 8);
-      val.setAttribute("text-anchor", "start");
-    }
+    if (g.mean < 0) { val.setAttribute("x", barX - 8); val.setAttribute("text-anchor", "end"); }
+    else { val.setAttribute("x", barX + barW + 8); val.setAttribute("text-anchor", "start"); }
     val.textContent = (g.mean > 0 ? "+" : "") + g.mean.toFixed(1) + "%";
     svg.appendChild(val);
   });
 
-  document.getElementById('bar-chart').appendChild(svg);
+  container.appendChild(svg);
 }
 
-// ---------- Table view ----------
-function renderTable() {
+// ============================================================
+// Table view
+// ============================================================
+function renderTable(data) {
   const table = document.getElementById('data-table');
+  table.innerHTML = "";
   const thead = document.createElement('thead');
   const headRow = document.createElement('tr');
-  ["Fecha", "Ruta", "Cabify", "Uber", "Gap %"].forEach(h => {
+  ["Fecha", "Ruta", "Cabify", "Uber", "DiDi", "Gap %"].forEach(h => {
     const th = document.createElement('th'); th.textContent = h; headRow.appendChild(th);
   });
   thead.appendChild(headRow);
   table.appendChild(thead);
 
   const tbody = document.createElement('tbody');
-  const sorted = [...DATA].sort((a,b) => new Date(a.t) - new Date(b.t));
+  const sorted = [...data].sort((a,b) => b.t - a.t).slice(0, 500);
   sorted.forEach(d => {
     const tr = document.createElement('tr');
     const cells = [
-      new Date(d.t).toLocaleString('es-AR'),
-      ROUTE_META[d.ruta] ? ROUTE_META[d.ruta].short : d.ruta,
-      d.cabify === null ? 's/d' : '$' + d.cabify.toLocaleString('es-AR'),
-      d.uber === null ? 's/d' : '$' + d.uber.toLocaleString('es-AR'),
+      d.t.toLocaleString('es-AR'),
+      routeMeta(d.ruta).short,
+      fmtMoney(d.cabify),
+      fmtMoney(d.uber),
+      fmtMoney(d.didi),
       (d.cabify !== null && d.uber !== null) ? ((d.cabify - d.uber)/d.uber*100).toFixed(1) + '%' : '—',
     ];
-    cells.forEach((c, idx) => {
-      const td = document.createElement('td');
-      td.textContent = c;
-      tr.appendChild(td);
-    });
+    cells.forEach(c => { const td = document.createElement('td'); td.textContent = c; tr.appendChild(td); });
     tbody.appendChild(tr);
   });
   table.appendChild(tbody);
+  if (data.length > 500) {
+    const note = document.createElement('caption');
+    note.style.captionSide = 'bottom'; note.style.fontSize = '0.75rem'; note.style.color = 'var(--text-muted)'; note.style.padding = '6px 0';
+    note.textContent = `Mostrando las 500 filas más recientes de ${data.length}.`;
+    table.appendChild(note);
+  }
 }
 
-renderStats();
-renderCharts();
-renderBarChart();
-renderTable();
+// ============================================================
+// Caveat / source note
+// ============================================================
+function renderCaveatAndSource() {
+  const days = new Set(RAW.map(d => d.t.toDateString())).size;
+  const minT = RAW.length ? new Date(Math.min(...RAW.map(d=>d.t.getTime()))) : null;
+  const maxT = RAW.length ? new Date(Math.max(...RAW.map(d=>d.t.getTime()))) : null;
+  const caveat = document.getElementById('caveat-box');
+  caveat.innerHTML = "";
+  const b = document.createElement('b'); b.textContent = 'Ventana de datos: ';
+  caveat.appendChild(b);
+  caveat.appendChild(document.createTextNode(
+    minT && maxT ? `${minT.toLocaleString('es-AR')} → ${maxT.toLocaleString('es-AR')} (${RAW.length} cotizaciones).` : 'sin datos.'
+  ));
+  if (days <= 2) {
+    caveat.appendChild(document.createElement('br'));
+    const b2 = document.createElement('b'); b2.textContent = 'Todavía no se pueden comparar';
+    caveat.appendChild(b2);
+    caveat.appendChild(document.createTextNode(' día de semana, principio/mediados de mes ni semanas calendario con tan poca historia.'));
+  }
+  document.getElementById('source-note').textContent =
+    `Fuente: planilla "Cotizaciones" (Google Sheets). ${dataMode === 'live' ? 'Conectado en vivo a tu Google Drive.' : 'Mostrando snapshot embebido.'}`;
+}
+
+// ============================================================
+// Master render
+// ============================================================
+function renderAll() {
+  const data = getFiltered();
+  renderCaveatAndSource();
+  renderStats(data);
+  renderLegend(data);
+  renderCharts(data);
+  renderBarChart(data);
+  renderTable(data);
+  updateFilterNote();
+}
+
+// ============================================================
+// Live status UI
+// ============================================================
+function renderLiveStatus() {
+  const dot = document.getElementById('live-dot');
+  const label = document.getElementById('live-label');
+  const btn = document.getElementById('live-refresh-btn');
+  const wrap = document.getElementById('content-wrap');
+
+  dot.className = 'live-dot';
+  wrap.classList.remove('stale');
+
+  if (dataMode === 'live') {
+    dot.classList.add('on');
+    label.textContent = `En vivo · actualizado ${relTime(lastUpdated)}`;
+    btn.hidden = false;
+  } else if (dataMode === 'refreshing') {
+    dot.classList.add('warn');
+    label.textContent = 'Actualizando…';
+    btn.hidden = false;
+    wrap.classList.add('stale');
+  } else if (dataMode === 'stale') {
+    dot.classList.add('warn');
+    label.textContent = `Reintentando · último dato ${relTime(lastUpdated)}`;
+    btn.hidden = false;
+  } else if (dataMode === 'error') {
+    dot.classList.add('err');
+    label.textContent = 'Sin conexión con Drive';
+    btn.hidden = false;
+  } else {
+    dot.classList.add('off');
+    label.textContent = 'Estático (snapshot embebido)';
+    btn.hidden = true;
+  }
+}
+
+function showBanner(kind, text) {
+  const el = document.getElementById('error-banner');
+  el.className = 'banner ' + kind;
+  el.textContent = text;
+  el.hidden = false;
+}
+function hideBanner() {
+  document.getElementById('error-banner').hidden = true;
+}
+
+// ============================================================
+// Live data via window.claude.mcp (Google Drive connector)
+// ============================================================
+function decodeB64Utf8(b64) {
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new TextDecoder('utf-8').decode(bytes);
+}
+
+function extractPayload(result) {
+  let p = result.payload;
+  if (typeof p === 'string') {
+    try { p = JSON.parse(p); } catch (e) { /* leave as string */ }
+  }
+  return p;
+}
+
+function applyCsvText(csvText, storedAt) {
+  const records = csvToRecords(csvText);
+  if (records.length) RAW = records;
+  lastUpdated = storedAt ?? Date.now();
+  dataMode = 'live';
+  hideBanner();
+  renderLiveStatus();
+  buildRouteChips();
+  renderAll();
+}
+
+function handleMcpError(err) {
+  switch (err.code) {
+    case 'needs_reauth':
+    case 'server_not_connected':
+    case 'selection_required':
+    case 'not_in_manifest':
+    case 'blocked_by_policy':
+    case 'approval_required':
+      dataMode = 'error';
+      renderLiveStatus();
+      showBanner('err', 'Se perdió la conexión con Google Drive (reconectá el conector "Google Drive" en claude.ai → Configuración → Conectores). Mientras tanto, se muestra el último dato disponible.');
+      break;
+    case 'server_unavailable':
+    case 'rate_limited':
+    case 'upstream_error':
+    case 'tool_error':
+      dataMode = 'stale';
+      renderLiveStatus();
+      showBanner('warn', 'Google Drive no respondió; reintentando automáticamente. Se muestra el último dato conocido.');
+      break;
+    case 'not_granted':
+    case 'capability_disabled':
+    case 'capability_removed':
+    default:
+      dataMode = 'static';
+      renderLiveStatus();
+      break;
+  }
+}
+
+async function initLive() {
+  const btn = document.getElementById('live-refresh-btn');
+  if (!window.claude || !window.claude.mcp) {
+    dataMode = 'static';
+    renderLiveStatus();
+    btn.hidden = true;
+    return;
+  }
+
+  const EXPECTED_TOOL = 'download_file_content';
+  let toolName = EXPECTED_TOOL;
+
+  // Self-diagnose the exact tool name/availability before subscribing —
+  // this integration wasn't hand-verified through a live browser call,
+  // so confirm against listTools() rather than assume the name is right.
+  try {
+    const listed = await window.claude.mcp.listTools();
+    const gdrive = listed.servers.find(s => s.server === 'Google Drive');
+    if (!gdrive) {
+      dataMode = 'error';
+      renderLiveStatus();
+      showBanner('err', 'No se encontró el conector "Google Drive" conectado a tu cuenta. Conectalo en claude.ai → Configuración → Conectores para ver datos en vivo.');
+      return;
+    }
+    const match = gdrive.tools.find(t => t.name === EXPECTED_TOOL);
+    if (!match) {
+      dataMode = 'error';
+      renderLiveStatus();
+      const available = gdrive.tools.map(t => t.name).join(', ') || '(ninguna)';
+      showBanner('err', `El conector Google Drive no expone "${EXPECTED_TOOL}" como se esperaba. Herramientas disponibles: ${available}. Avisale a quien mantiene este dashboard para ajustarlo.`);
+      return;
+    }
+  } catch (e) {
+    // listTools itself failed (older shell, transient issue) — fall through
+    // and let watchTool surface its own error if the assumed name is wrong.
+  }
+
+  const input = {fileId: SHEET_ID, exportMimeType: 'text/csv'};
+
+  window.claude.mcp.watchTool('Google Drive', toolName, input, (ev) => {
+    if (ev.type === 'data') {
+      try {
+        const payload = extractPayload(ev.result);
+        const csvText = decodeB64Utf8(payload.content);
+        const storedAt = ev.result.cache ? ev.result.cache.storedAt : null;
+        applyCsvText(csvText, storedAt);
+      } catch (e) {
+        dataMode = 'error';
+        renderLiveStatus();
+        showBanner('err', 'No se pudo leer la respuesta de Google Drive. Se muestra el último dato disponible.');
+      }
+    } else {
+      handleMcpError(ev.error);
+    }
+  }, {refetchInterval: 180000});
+
+  btn.addEventListener('click', async () => {
+    dataMode = 'refreshing';
+    renderLiveStatus();
+    try {
+      await window.claude.mcp.invalidate('Google Drive', toolName, input);
+    } catch (e) {
+      // ignore; watcher will surface the error state if the retry fails
+    }
+  });
+
+  // keep the "hace X min" label fresh
+  setInterval(() => { if (dataMode === 'live' || dataMode === 'stale') renderLiveStatus(); }, 30000);
+}
+
+// ============================================================
+// Boot
+// ============================================================
+buildFilterBar();
+buildRouteChips();
+renderAll();
+renderLiveStatus();
+initLive();
 </script>
